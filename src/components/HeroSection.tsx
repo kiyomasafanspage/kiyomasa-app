@@ -1,22 +1,31 @@
-'use client';
+"use client";
 
-import { motion } from 'framer-motion';
-import { useEffect, useRef } from 'react';
+import { motion, AnimatePresence } from "framer-motion";
+import { useEffect, useRef, useState } from "react";
 
-const CA = 'ANP1wJHYWYQPfrZvg8FnjduwfBVJhRV3xqKcs3yapump';
+const CA = "ANP1wJHYWYQPfrZvg8FnjduwfBVJhRV3xqKcs3yapump";
 
 function CandlestickCanvas() {
   const ref = useRef<HTMLCanvasElement>(null);
   useEffect(() => {
     const canvas = ref.current;
     if (!canvas) return;
-    const ctx = canvas.getContext('2d');
+    const ctx = canvas.getContext("2d");
     if (!ctx) return;
     canvas.width = canvas.offsetWidth;
     canvas.height = canvas.offsetHeight;
 
-    const candles: { x: number; open: number; close: number; high: number; low: number; bull: boolean }[] = [];
-    const cW = 18, gap = 6, total = Math.floor(canvas.width / (cW + gap));
+    const candles: {
+      x: number;
+      open: number;
+      close: number;
+      high: number;
+      low: number;
+      bull: boolean;
+    }[] = [];
+    const cW = 18,
+      gap = 6,
+      total = Math.floor(canvas.width / (cW + gap));
     let baseY = canvas.height * 0.5;
 
     for (let i = 0; i < total; i++) {
@@ -25,7 +34,14 @@ function CandlestickCanvas() {
       const close = Math.max(40, Math.min(canvas.height - 40, open + move));
       const high = Math.min(open, close) - Math.random() * 20;
       const low = Math.max(open, close) + Math.random() * 20;
-      candles.push({ x: i * (cW + gap) + cW, open, close, high, low, bull: close < open });
+      candles.push({
+        x: i * (cW + gap) + cW,
+        open,
+        close,
+        high,
+        low,
+        bull: close < open,
+      });
       baseY = close;
     }
 
@@ -34,7 +50,7 @@ function CandlestickCanvas() {
     const animate = () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       candles.forEach((c) => {
-        const color = c.bull ? '#00ff88' : '#ff2d2d';
+        const color = c.bull ? "#00ff88" : "#ff2d2d";
         ctx.save();
         ctx.shadowBlur = 8;
         ctx.shadowColor = color;
@@ -46,7 +62,12 @@ function CandlestickCanvas() {
         ctx.lineTo(c.x + cW / 2, c.low);
         ctx.stroke();
         ctx.fillStyle = color;
-        ctx.fillRect(c.x, Math.min(c.open, c.close), cW, Math.max(2, Math.abs(c.close - c.open)));
+        ctx.fillRect(
+          c.x,
+          Math.min(c.open, c.close),
+          cW,
+          Math.max(2, Math.abs(c.close - c.open)),
+        );
         ctx.restore();
       });
       frame++;
@@ -77,9 +98,17 @@ function TempleBackground() {
         <rect x="800" y="120" width="20" height="280" fill="#c0392b" />
         {/* Pagoda */}
         <polygon points="240,300 320,180 400,300" fill="#1a0000" />
-        <polygon points="255,300 320,200 385,300" fill="#c0392b" opacity="0.3" />
+        <polygon
+          points="255,300 320,200 385,300"
+          fill="#c0392b"
+          opacity="0.3"
+        />
         <polygon points="260,250 320,150 380,250" fill="#1a0000" />
-        <polygon points="272,250 320,165 368,250" fill="#c0392b" opacity="0.3" />
+        <polygon
+          points="272,250 320,165 368,250"
+          fill="#c0392b"
+          opacity="0.3"
+        />
         <polygon points="278,205 320,120 362,205" fill="#1a0000" />
         <rect x="312" y="300" width="16" height="100" fill="#1a0000" />
         {/* Mountains */}
@@ -97,9 +126,12 @@ function TempleBackground() {
       {/* Red moon */}
       <motion.div
         className="absolute top-16 right-1/4 w-32 h-32 rounded-full"
-        style={{ background: 'radial-gradient(circle, rgba(192,57,43,0.4) 0%, rgba(192,57,43,0) 70%)' }}
+        style={{
+          background:
+            "radial-gradient(circle, rgba(192,57,43,0.4) 0%, rgba(192,57,43,0) 70%)",
+        }}
         animate={{ scale: [1, 1.15, 1], opacity: [0.4, 0.7, 0.4] }}
-        transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
+        transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
       />
 
       {/* Floating petals */}
@@ -110,13 +142,97 @@ function TempleBackground() {
           style={{
             left: `${10 + i * 8}%`,
             top: `${20 + (i % 4) * 15}%`,
-            background: i % 3 === 0 ? '#ff2d2d' : i % 3 === 1 ? '#ffd700' : '#ff6b6b',
-            boxShadow: `0 0 6px ${i % 2 === 0 ? '#ff2d2d' : '#ffd700'}`,
+            background:
+              i % 3 === 0 ? "#ff2d2d" : i % 3 === 1 ? "#ffd700" : "#ff6b6b",
+            boxShadow: `0 0 6px ${i % 2 === 0 ? "#ff2d2d" : "#ffd700"}`,
           }}
-          animate={{ y: [-10, 10, -10], x: [-5, 5, -5], opacity: [0.3, 0.8, 0.3] }}
-          transition={{ duration: 3 + i * 0.4, repeat: Infinity, ease: 'easeInOut', delay: i * 0.3 }}
+          animate={{
+            y: [-10, 10, -10],
+            x: [-5, 5, -5],
+            opacity: [0.3, 0.8, 0.3],
+          }}
+          transition={{
+            duration: 3 + i * 0.4,
+            repeat: Infinity,
+            ease: "easeInOut",
+            delay: i * 0.3,
+          }}
         />
       ))}
+    </div>
+  );
+}
+
+/* ── Interactive Gorilla Mascot ── */
+const REACTIONS = [
+  { text: "ROAR! 🦁", color: "#ff2d2d" },
+  { text: "KIYOMASA! 🔥", color: "#ffd700" },
+  { text: "TO THE MOON! 🚀", color: "#00ff88" },
+  { text: "WAGMI! 💎", color: "#a78bfa" },
+  { text: "APE IN! 🦍", color: "#00e5ff" },
+  { text: "LFG!!! 🌙", color: "#ff6bff" },
+];
+
+function GorillaMascot() {
+  const [clicks, setClicks] = useState(0);
+  const [reaction, setReaction] = useState<(typeof REACTIONS)[0] | null>(null);
+  const [shaking, setShaking] = useState(false);
+
+  const handleClick = () => {
+    const n = clicks + 1;
+    setClicks(n);
+    setReaction(REACTIONS[(n - 1) % REACTIONS.length]);
+    setShaking(true);
+    setTimeout(() => {
+      setReaction(null);
+      setShaking(false);
+    }, 1100);
+  };
+
+  return (
+    <div className="relative flex flex-col items-center select-none cursor-pointer mt-10 mb-4">
+      <AnimatePresence>
+        {reaction && (
+          <motion.p
+            key={reaction.text}
+            className="absolute font-black text-lg whitespace-nowrap pointer-events-none"
+            style={{ color: reaction.color, top: -40 }}
+            initial={{ opacity: 0, y: 0, scale: 0.6 }}
+            animate={{ opacity: 1, y: -12, scale: 1 }}
+            exit={{ opacity: 0, y: -50, scale: 0.8 }}
+            transition={{ duration: 0.35 }}
+          >
+            {reaction.text}
+          </motion.p>
+        )}
+      </AnimatePresence>
+
+      <motion.span
+        className="text-7xl md:text-8xl"
+        onClick={handleClick}
+        animate={
+          shaking
+            ? { rotate: [-8, 8, -8, 8, 0], scale: [1, 1.35, 1] }
+            : { y: [-6, 6, -6], rotate: [-2, 2, -2] }
+        }
+        transition={
+          shaking
+            ? { duration: 0.4 }
+            : { duration: 3, repeat: Infinity, ease: "easeInOut" }
+        }
+        whileHover={{ scale: 1.12 }}
+      >
+        🦍
+      </motion.span>
+
+      <motion.p
+        className="text-[9px] uppercase tracking-[0.25em] mt-2"
+        animate={{ opacity: [0.25, 0.55, 0.25] }}
+        transition={{ duration: 2.5, repeat: Infinity }}
+        style={{ color: clicks > 0 ? "#ffd700" : "rgba(255,255,255,0.3)" }}
+      >
+        {clicks === 0 ? "Tap me!" : `${clicks} clicks`}
+      </motion.p>
     </div>
   );
 }
@@ -151,7 +267,9 @@ export default function HeroSection() {
           className="inline-flex items-center gap-2 glass-red rounded-full px-4 py-1.5 mb-8 neon-border-red"
         >
           <span className="w-2 h-2 rounded-full bg-[#ff2d2d] glow-pulse" />
-          <span className="text-xs text-[#ff6b6b] tracking-[0.2em] font-medium uppercase">Live on Solana</span>
+          <span className="text-xs text-[#ff6b6b] tracking-[0.2em] font-medium uppercase">
+            Live on Solana
+          </span>
         </motion.div>
 
         {/* Main headline */}
@@ -167,7 +285,7 @@ export default function HeroSection() {
             <span className="gradient-text">GORILLA</span>
           </h1>
           <h1 className="text-5xl md:text-7xl lg:text-8xl font-black leading-none tracking-tighter mb-6">
-            <span className="neon-gold text-[#ffd700]">MEME IS HERE</span>{' '}
+            <span className="neon-gold text-[#ffd700]">MEME IS HERE</span>{" "}
             <span className="float-anim inline-block">🦍</span>
             <span className="inline-block ml-1">🇯🇵</span>
           </h1>
@@ -180,8 +298,9 @@ export default function HeroSection() {
           transition={{ duration: 0.7, delay: 0.5 }}
           className="text-lg md:text-xl text-white/60 max-w-2xl mx-auto mb-10 leading-relaxed"
         >
-          Inspired by Kiyomasa, Japan&apos;s iconic gorilla. A community-driven meme movement built by{' '}
-          <span className="text-[#ffd700]">believers</span>,{' '}
+          Inspired by Kiyomasa, Japan&apos;s iconic gorilla. A community-driven
+          meme movement built by{" "}
+          <span className="text-[#ffd700]">believers</span>,{" "}
           <span className="text-[#ff2d2d]">creators</span>, and degens.
         </motion.p>
 
@@ -217,7 +336,9 @@ export default function HeroSection() {
           transition={{ delay: 1 }}
           className="inline-flex items-center gap-3 glass rounded-xl px-4 py-3 neon-border-gold"
         >
-          <span className="text-xs text-white/50 uppercase tracking-widest font-medium hidden sm:block">CA:</span>
+          <span className="text-xs text-white/50 uppercase tracking-widest font-medium hidden sm:block">
+            CA:
+          </span>
           <span className="text-xs text-[#ffd700] font-mono tracking-wide">
             {CA.slice(0, 8)}...{CA.slice(-8)}
           </span>
@@ -237,16 +358,27 @@ export default function HeroSection() {
           className="flex flex-wrap items-center justify-center gap-8 mt-14"
         >
           {[
-            { label: 'Network', value: 'Solana' },
-            { label: 'Supply', value: '1B' },
-            { label: 'Tax', value: '0%' },
-            { label: 'Community', value: 'CTO' },
+            { label: "Network", value: "Solana" },
+            { label: "Supply", value: "1B" },
+            { label: "Tax", value: "0%" },
+            { label: "Community", value: "CTO" },
           ].map((s) => (
             <div key={s.label} className="text-center">
               <p className="text-xl font-black gradient-text-gold">{s.value}</p>
-              <p className="text-xs text-white/40 uppercase tracking-widest mt-0.5">{s.label}</p>
+              <p className="text-xs text-white/40 uppercase tracking-widest mt-0.5">
+                {s.label}
+              </p>
             </div>
           ))}
+        </motion.div>
+
+        {/* Interactive mascot */}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.7 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ delay: 1.5, duration: 0.5 }}
+        >
+          <GorillaMascot />
         </motion.div>
       </div>
 
