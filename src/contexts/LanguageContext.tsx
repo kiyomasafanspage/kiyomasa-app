@@ -189,6 +189,16 @@ export const T = {
       sub: "The gorilla army is creative. Community-made art from believers around the world.",
       marqueeLabel: "Fans Arts Gallery",
     },
+    viral: {
+      eyebrow: "Going Viral · As Seen On",
+      heading: "KIYOMASA",
+      headingAccent: "In The Media",
+      sub: "The internet can't stop watching. Kiyomasa is making waves across every platform.",
+      watchBtn: "Watch Now →",
+      youtube: "YouTube",
+      instagram: "Instagram Reel",
+      twitter: "X · Twitter",
+    },
     footer: {
       tagline:
         "Japan's gorilla meme movement. Community-driven. Built by believers. Powered by memes.",
@@ -380,6 +390,16 @@ export const T = {
       sub: "ゴリラ軍団はクリエイティブです。世界中の信者によるコミュニティアート。",
       marqueeLabel: "ファンアーツギャラリー",
     },
+    viral: {
+      eyebrow: "バイラル中 · 話題",
+      heading: "KIYOMASA",
+      headingAccent: "メディアで話題",
+      sub: "インターネットが止まらない。キヨマサがあらゆるプラットフォームで話題沸騰中。",
+      watchBtn: "今すぐ見る →",
+      youtube: "YouTube",
+      instagram: "Instagram リール",
+      twitter: "X · Twitter",
+    },
     footer: {
       tagline:
         "日本のゴリラミームムーブメント。コミュニティ主導。信者が作り、ミームが動かす。",
@@ -568,6 +588,16 @@ export const T = {
       headingAccent: "ARTS",
       sub: "大猩猩军团充满创意。来自世界各地信仰者的社区艺术作品。",
       marqueeLabel: "粉丝艺术画廊",
+    },
+    viral: {
+      eyebrow: "病毒式传播 · 各大平台热议",
+      heading: "KIYOMASA",
+      headingAccent: "媒体报道",
+      sub: "互联网停不下来。清正正在各个平台掀起波澜。",
+      watchBtn: "立即观看 →",
+      youtube: "YouTube",
+      instagram: "Instagram 视频",
+      twitter: "X · Twitter",
     },
     footer: {
       tagline: "日本大猩猩表情包运动。社区驱动。由信仰者建造，由表情包驱动。",
