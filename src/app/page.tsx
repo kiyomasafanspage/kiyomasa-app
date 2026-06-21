@@ -1,4 +1,5 @@
 import ParticleBackground from "@/components/ParticleBackground";
+import SiteBackground from "@/components/SiteBackground";
 import Navbar from "@/components/Navbar";
 import HeroSection from "@/components/HeroSection";
 import AboutSection from "@/components/AboutSection";
@@ -21,6 +22,7 @@ import WenMoonCalculator from "@/components/WenMoonCalculator";
 export default function Home() {
   return (
     <>
+      <SiteBackground />
       <ParticleBackground />
       <CursorTrail />
       <Navbar />
