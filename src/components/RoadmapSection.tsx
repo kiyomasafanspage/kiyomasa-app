@@ -8,13 +8,13 @@ const phases = [
     phase: '01',
     title: 'Community Formation',
     status: 'active',
-    items: ['Community Formation', 'Social Growth', 'Meme Expansion', 'Website Launch', 'Initial Zoo Donation'],
+    items: ['Community Formation', 'Community Events', 'Social Growth', 'Meme Expansion', 'Website Launch', 'Initial Zoo Donation'],
   },
   {
     phase: '02',
     title: 'Expansion',
-    status: 'upcoming',
-    items: ['Influencer Partnerships', 'Community Events', 'Viral Campaigns', 'NFT Genesis Collection', 'Exchange Growth'],
+    status: 'active',
+    items: ['Influencer Partnerships', 'Viral Campaigns', 'NFT Genesis Collection', 'Exchange Growth'],
   },
   {
     phase: '03',

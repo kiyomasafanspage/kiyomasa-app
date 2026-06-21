@@ -4,6 +4,7 @@ import HeroSection from "@/components/HeroSection";
 import AboutSection from "@/components/AboutSection";
 import TokenSection from "@/components/TokenSection";
 import MemeGallery from "@/components/MemeGallery";
+import FanArtSection from "@/components/FanArtSection";
 import EventSection from "@/components/EventSection";
 import DonationReport from "@/components/DonationReport";
 import RoadmapSection from "@/components/RoadmapSection";
@@ -29,6 +30,7 @@ export default function Home() {
         <TokenSection />
         <PumpMeter />
         <MemeGallery />
+        <FanArtSection />
         <EventSection />
         <DonationReport />
         <WenMoonCalculator />

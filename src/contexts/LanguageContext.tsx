@@ -174,6 +174,20 @@ export const T = {
         date: "June 2026",
         note: "First official KIYOMASA donation. Supporting Grace and gorilla welfare initiatives.",
       },
+      donation2: {
+        title: "Direct to Higashiyama Zoo 🏯",
+        recipient: "Higashiyama Zoo & Botanical Gardens",
+        date: "June 2026",
+        note: "Direct donation to Higashiyama Zoo — the home of Kiyomasa, Japan's iconic gorilla. Supporting gorilla care and conservation programs at the zoo.",
+      },
+      proofImages: "Proof Images",
+    },
+    fanart: {
+      eyebrow: "Community Art · Fan Creations",
+      heading: "Fan",
+      headingAccent: "Art",
+      sub: "The gorilla army is creative. Community-made art from believers around the world.",
+      marqueeLabel: "Fan Art Gallery",
     },
     footer: {
       tagline:
@@ -351,6 +365,20 @@ export const T = {
         date: "2026年6月",
         note: "KIYOMASAの初めての公式寄付。グレースとゴリラ保護活動を支援。",
       },
+      donation2: {
+        title: "東山動植物園への直接寄付 🏯",
+        recipient: "東山動植物園",
+        date: "2026年6月",
+        note: "キヨマサの故郷・東山動植物園への直接寄付。ゴリラのケアと保護プログラムを支援します。",
+      },
+      proofImages: "証明写真",
+    },
+    fanart: {
+      eyebrow: "コミュニティアート · ファン作品",
+      heading: "ファン",
+      headingAccent: "アート",
+      sub: "ゴリラ軍団はクリエイティブです。世界中の信者によるコミュニティアート。",
+      marqueeLabel: "ファンアートギャラリー",
     },
     footer: {
       tagline:
@@ -526,6 +554,20 @@ export const T = {
         date: "2026年6月",
         note: "KIYOMASA首次官方捐款。支持格蕾丝和大猩猩保护行动。",
       },
+      donation2: {
+        title: "直接捐款给东山动植物园 🏯",
+        recipient: "东山动植物园",
+        date: "2026年6月",
+        note: "直接向东山动植物园（清正的家园）捐款，支持大猩猩护理和保护项目。",
+      },
+      proofImages: "证明图片",
+    },
+    fanart: {
+      eyebrow: "社区艺术 · 粉丝创作",
+      heading: "粉丝",
+      headingAccent: "艺术",
+      sub: "大猩猩军团充满创意。来自世界各地信仰者的社区艺术作品。",
+      marqueeLabel: "粉丝艺术画廊",
     },
     footer: {
       tagline: "日本大猩猩表情包运动。社区驱动。由信仰者建造，由表情包驱动。",
