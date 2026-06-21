@@ -34,29 +34,67 @@ const DONATIONS = [
 function ProofGallery({
   images,
   proofLabel,
+  accent,
+  onPreview,
 }: {
   images: string[];
   proofLabel: string;
+  accent: string;
+  onPreview: (src: string) => void;
 }) {
   const [active, setActive] = useState(0);
   return (
     <div>
-      {/* Main image */}
-      <div className="relative w-full h-64 md:h-72 overflow-hidden rounded-t-2xl">
+      {/* Main image — clickable for full preview */}
+      <div
+        className="relative w-full h-64 md:h-72 overflow-hidden rounded-t-2xl cursor-zoom-in group"
+        onClick={() => onPreview(images[active])}
+      >
         <Image
           src={images[active]}
           alt="Donation proof"
           fill
-          className="object-cover object-top transition-opacity duration-300"
+          className="object-cover object-top transition-transform duration-500 group-hover:scale-105"
         />
+        {/* Dark overlay on hover */}
         <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
+        <div
+          className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+          style={{ background: "rgba(0,0,0,0.35)" }}
+        >
+          <div
+            className="flex items-center gap-2 px-4 py-2 rounded-full font-black text-xs uppercase tracking-widest"
+            style={{
+              background: "rgba(0,0,0,0.75)",
+              border: `1px solid ${accent}60`,
+              color: accent,
+            }}
+          >
+            <svg
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.5"
+              strokeLinecap="round"
+            >
+              <circle cx="11" cy="11" r="8" />
+              <line x1="21" y1="21" x2="16.65" y2="16.65" />
+              <line x1="11" y1="8" x2="11" y2="14" />
+              <line x1="8" y1="11" x2="14" y2="11" />
+            </svg>
+            Preview Full
+          </div>
+        </div>
+        {/* Proof badge */}
         <div className="absolute bottom-3 left-3">
           <span
             className="text-[10px] uppercase tracking-widest font-black px-3 py-1.5 rounded-full"
             style={{
               background: "rgba(0,0,0,0.8)",
-              border: "1px solid rgba(0,255,136,0.4)",
-              color: "#00ff88",
+              border: `1px solid ${accent}50`,
+              color: accent,
             }}
           >
             📸 {proofLabel}{" "}
@@ -78,7 +116,7 @@ function ProofGallery({
               style={{
                 border:
                   active === i
-                    ? "2px solid #00ff88"
+                    ? `2px solid ${accent}`
                     : "2px solid rgba(255,255,255,0.1)",
                 opacity: active === i ? 1 : 0.5,
               }}
@@ -101,10 +139,12 @@ function DonationCard({
   donation,
   index,
   inView,
+  onPreview,
 }: {
   donation: (typeof DONATIONS)[0];
   index: number;
   inView: boolean;
+  onPreview: (src: string) => void;
 }) {
   const { tr } = useLang();
   const d = index === 0 ? tr.donation.donation1 : tr.donation.donation2;
@@ -164,6 +204,8 @@ function DonationCard({
       <ProofGallery
         images={donation.images}
         proofLabel={tr.donation.proofLabel}
+        accent={donation.accent}
+        onPreview={onPreview}
       />
 
       {/* Details */}
@@ -237,6 +279,7 @@ export default function DonationReport() {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: "-80px" });
   const { tr } = useLang();
+  const [preview, setPreview] = useState<string | null>(null);
 
   return (
     <section id="donation" ref={ref} className="relative section-padding">
@@ -297,7 +340,13 @@ export default function DonationReport() {
         {/* Donation cards — 2 column on md+ */}
         <div className="grid md:grid-cols-2 gap-6 mb-6">
           {DONATIONS.map((d, i) => (
-            <DonationCard key={d.id} donation={d} index={i} inView={inView} />
+            <DonationCard
+              key={d.id}
+              donation={d}
+              index={i}
+              inView={inView}
+              onPreview={setPreview}
+            />
           ))}
         </div>
 
@@ -318,6 +367,40 @@ export default function DonationReport() {
           </motion.p>
         </motion.div>
       </div>
+
+      {/* Lightbox */}
+      {preview && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="fixed inset-0 bg-black/95 z-[60] flex items-center justify-center p-4"
+          onClick={() => setPreview(null)}
+        >
+          <motion.div
+            initial={{ scale: 0.9, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ duration: 0.25 }}
+            className="relative max-w-3xl w-full rounded-2xl overflow-hidden"
+            style={{ border: "1px solid rgba(0,255,136,0.3)" }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <Image
+              src={preview}
+              alt="Donation proof full"
+              width={1200}
+              height={900}
+              className="w-full h-auto max-h-[85vh] object-contain"
+              style={{ background: "#050505" }}
+            />
+          </motion.div>
+          <button
+            onClick={() => setPreview(null)}
+            className="absolute top-4 right-4 w-10 h-10 flex items-center justify-center glass rounded-full text-white/60 hover:text-white text-2xl z-10 transition-colors"
+          >
+            ×
+          </button>
+        </motion.div>
+      )}
     </section>
   );
 }

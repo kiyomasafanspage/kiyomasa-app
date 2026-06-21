@@ -184,10 +184,10 @@ export const T = {
     },
     fanart: {
       eyebrow: "Community Art · Fan Creations",
-      heading: "Fan",
-      headingAccent: "Art",
+      heading: "FANS",
+      headingAccent: "ARTS",
       sub: "The gorilla army is creative. Community-made art from believers around the world.",
-      marqueeLabel: "Fan Art Gallery",
+      marqueeLabel: "Fans Arts Gallery",
     },
     footer: {
       tagline:
@@ -375,10 +375,10 @@ export const T = {
     },
     fanart: {
       eyebrow: "コミュニティアート · ファン作品",
-      heading: "ファン",
-      headingAccent: "アート",
+      heading: "FANS",
+      headingAccent: "ARTS",
       sub: "ゴリラ軍団はクリエイティブです。世界中の信者によるコミュニティアート。",
-      marqueeLabel: "ファンアートギャラリー",
+      marqueeLabel: "ファンアーツギャラリー",
     },
     footer: {
       tagline:
@@ -564,8 +564,8 @@ export const T = {
     },
     fanart: {
       eyebrow: "社区艺术 · 粉丝创作",
-      heading: "粉丝",
-      headingAccent: "艺术",
+      heading: "FANS",
+      headingAccent: "ARTS",
       sub: "大猩猩军团充满创意。来自世界各地信仰者的社区艺术作品。",
       marqueeLabel: "粉丝艺术画廊",
     },
