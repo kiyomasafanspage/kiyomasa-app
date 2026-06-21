@@ -2,6 +2,7 @@
 
 import { motion, AnimatePresence } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
+import { useLang } from "@/contexts/LanguageContext";
 
 const CA = "ANP1wJHYWYQPfrZvg8FnjduwfBVJhRV3xqKcs3yapump";
 
@@ -174,6 +175,7 @@ const REACTIONS = [
 ];
 
 function GorillaMascot() {
+  const { tr } = useLang();
   const [clicks, setClicks] = useState(0);
   const [reaction, setReaction] = useState<(typeof REACTIONS)[0] | null>(null);
   const [shaking, setShaking] = useState(false);
@@ -231,13 +233,14 @@ function GorillaMascot() {
         transition={{ duration: 2.5, repeat: Infinity }}
         style={{ color: clicks > 0 ? "#ffd700" : "rgba(255,255,255,0.3)" }}
       >
-        {clicks === 0 ? "Tap me!" : `${clicks} clicks`}
+        {clicks === 0 ? tr.hero.tapMe : `${clicks} ${tr.hero.clicks}`}
       </motion.p>
     </div>
   );
 }
 
 export default function HeroSection() {
+  const { tr } = useLang();
   const copyCA = () => {
     navigator.clipboard.writeText(CA);
   };
@@ -268,7 +271,7 @@ export default function HeroSection() {
         >
           <span className="w-2 h-2 rounded-full bg-[#ff2d2d] glow-pulse" />
           <span className="text-xs text-[#ff6b6b] tracking-[0.2em] font-medium uppercase">
-            Live on Solana
+            {tr.hero.badge}
           </span>
         </motion.div>
 
@@ -279,13 +282,13 @@ export default function HeroSection() {
           transition={{ duration: 0.8, delay: 0.2 }}
         >
           <h1 className="text-5xl md:text-7xl lg:text-8xl font-black leading-none tracking-tighter mb-2">
-            <span className="neon-red text-white">JAPAN&apos;S</span>
+            <span className="neon-red text-white">{tr.hero.line1}</span>
           </h1>
           <h1 className="text-5xl md:text-7xl lg:text-8xl font-black leading-none tracking-tighter mb-2">
-            <span className="gradient-text">GORILLA</span>
+            <span className="gradient-text">{tr.hero.line2}</span>
           </h1>
           <h1 className="text-5xl md:text-7xl lg:text-8xl font-black leading-none tracking-tighter mb-6">
-            <span className="neon-gold text-[#ffd700]">MEME IS HERE</span>{" "}
+            <span className="neon-gold text-[#ffd700]">{tr.hero.line3}</span>{" "}
             <span className="float-anim inline-block">🦍</span>
             <span className="inline-block ml-1">🇯🇵</span>
           </h1>
@@ -298,10 +301,7 @@ export default function HeroSection() {
           transition={{ duration: 0.7, delay: 0.5 }}
           className="text-lg md:text-xl text-white/60 max-w-2xl mx-auto mb-10 leading-relaxed"
         >
-          Inspired by Kiyomasa, Japan&apos;s iconic gorilla. A community-driven
-          meme movement built by{" "}
-          <span className="text-[#ffd700]">believers</span>,{" "}
-          <span className="text-[#ff2d2d]">creators</span>, and degens.
+          {tr.hero.sub}
         </motion.p>
 
         {/* CTA Buttons */}
@@ -317,7 +317,7 @@ export default function HeroSection() {
             rel="noopener noreferrer"
             className="btn-primary text-white font-black px-10 py-4 rounded-full tracking-widest uppercase text-sm w-full sm:w-auto text-center animated-border"
           >
-            🔥 Buy $KIYOMASA
+            {tr.hero.buyBtn}
           </a>
           <a
             href="https://t.me/kiyomasa_cto_chat"
@@ -325,7 +325,7 @@ export default function HeroSection() {
             rel="noopener noreferrer"
             className="btn-secondary font-bold px-10 py-4 rounded-full tracking-widest uppercase text-sm w-full sm:w-auto text-center"
           >
-            Join Community 🦍
+            {tr.hero.joinBtn}
           </a>
         </motion.div>
 
@@ -346,7 +346,7 @@ export default function HeroSection() {
             onClick={copyCA}
             className="text-xs text-white/40 hover:text-[#ffd700] transition-colors px-2 py-1 rounded border border-white/10 hover:border-[#ffd700]/40"
           >
-            Copy
+            {tr.hero.copy}
           </button>
         </motion.div>
 
@@ -358,10 +358,10 @@ export default function HeroSection() {
           className="flex flex-wrap items-center justify-center gap-8 mt-14"
         >
           {[
-            { label: "Network", value: "Solana" },
-            { label: "Supply", value: "1B" },
-            { label: "Tax", value: "0%" },
-            { label: "Community", value: "CTO" },
+            { label: tr.hero.network, value: "Solana" },
+            { label: tr.hero.supply, value: "1B" },
+            { label: tr.hero.tax, value: "0%" },
+            { label: tr.hero.community, value: "CTO" },
           ].map((s) => (
             <div key={s.label} className="text-center">
               <p className="text-xl font-black gradient-text-gold">{s.value}</p>

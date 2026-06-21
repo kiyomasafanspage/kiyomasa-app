@@ -4,6 +4,7 @@ import { motion, useInView } from "framer-motion";
 import { useRef, useState, useEffect } from "react";
 import { useTokenData, fmtUsd, fmtPrice } from "@/hooks/useTokenData";
 import DexChart from "@/components/DexChart";
+import { useLang } from "@/contexts/LanguageContext";
 
 const CA = "ANP1wJHYWYQPfrZvg8FnjduwfBVJhRV3xqKcs3yapump";
 
@@ -32,10 +33,11 @@ function PriceChange({ pct }: { pct: number }) {
 }
 
 function LiveDot() {
+  const { tr } = useLang();
   return (
     <span className="inline-flex items-center gap-1.5 text-[10px] text-white/40 uppercase tracking-widest">
       <span className="w-1.5 h-1.5 rounded-full bg-[#00ff88] glow-pulse" />
-      Live
+      {tr.token.live}
     </span>
   );
 }
@@ -78,13 +80,18 @@ export default function TokenSection() {
   const inView = useInView(ref, { once: true, margin: "-100px" });
   const [copied, setCopied] = useState(false);
   const { data, loading } = useTokenData(30_000);
+  const { tr } = useLang();
   const [updatedStr, setUpdatedStr] = useState("");
 
   useEffect(() => {
     if (!data?.updatedAt) return;
     const fmt = () => {
       const s = Math.floor((Date.now() - data.updatedAt.getTime()) / 1000);
-      setUpdatedStr(s < 5 ? "just now" : `${s}s ago`);
+      setUpdatedStr(
+        s < 5
+          ? tr.token.updatedJustNow
+          : tr.token.updatedAgo.replace("{n}", String(s)),
+      );
     };
     fmt();
     const id = setInterval(fmt, 5000);
@@ -119,10 +126,11 @@ export default function TokenSection() {
           className="text-center mb-14"
         >
           <span className="text-xs tracking-[0.4em] text-[#ffd700]/60 uppercase font-medium">
-            On-Chain · Real-Time
+            {tr.token.eyebrow}
           </span>
           <h2 className="text-4xl md:text-6xl font-black mt-3 mb-4">
-            Token <span className="gradient-text">Information</span>
+            {tr.token.heading}{" "}
+            <span className="gradient-text">{tr.token.headingAccent}</span>
           </h2>
           <div
             className="w-24 h-0.5 mx-auto"
@@ -143,7 +151,7 @@ export default function TokenSection() {
           <div className="flex items-center gap-4">
             <div>
               <p className="text-xs text-white/40 uppercase tracking-widest mb-1">
-                $KIYOMASA Price
+                {tr.token.price}
               </p>
               <p className="text-3xl md:text-4xl font-black gradient-text-gold">
                 {loading ? <Skeleton /> : fmtPrice(data?.price ?? null)}
@@ -166,7 +174,7 @@ export default function TokenSection() {
             <LiveDot />
             {updatedStr && (
               <span className="text-[10px] text-white/20">
-                Updated {updatedStr}
+                {tr.token.updated} {updatedStr}
               </span>
             )}
           </div>
@@ -180,25 +188,25 @@ export default function TokenSection() {
           className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6"
         >
           <StatCard
-            label="Market Cap"
+            label={tr.token.marketCap}
             value={loading ? "—" : fmtUsd(data?.marketCap ?? 0)}
             loading={loading}
             accent="#ffd700"
           />
           <StatCard
-            label="Volume 24h"
+            label={tr.token.volume24h}
             value={loading ? "—" : fmtUsd(data?.volume24h ?? 0)}
             loading={loading}
             accent="#ff6b6b"
           />
           <StatCard
-            label="Liquidity"
+            label={tr.token.liquidity}
             value={loading ? "—" : fmtUsd(data?.liquidity ?? 0)}
             loading={loading}
             accent="#00ff88"
           />
           <StatCard
-            label="FDV"
+            label={tr.token.fdv}
             value={loading ? "—" : fmtUsd(data?.fdv ?? 0)}
             loading={loading}
             accent="#a78bfa"
@@ -214,9 +222,15 @@ export default function TokenSection() {
             className="glass rounded-2xl p-4 mb-6 flex flex-col gap-2"
           >
             <div className="flex justify-between text-xs text-white/40 uppercase tracking-widest">
-              <span>🟢 Buys {data.buys24h.toLocaleString()}</span>
-              <span>24h Transactions · {txTotal.toLocaleString()} total</span>
-              <span>Sells {data.sells24h.toLocaleString()} 🔴</span>
+              <span>
+                🟢 {tr.token.buys} {data.buys24h.toLocaleString()}
+              </span>
+              <span>
+                {tr.token.txTotal.replace("{n}", txTotal.toLocaleString())}
+              </span>
+              <span>
+                {tr.token.sells} {data.sells24h.toLocaleString()} 🔴
+              </span>
             </div>
             <div className="relative h-2.5 rounded-full overflow-hidden bg-white/5">
               <div
@@ -236,10 +250,10 @@ export default function TokenSection() {
             </div>
             <div className="flex justify-between">
               <span className="text-xs font-bold text-[#00ff88]">
-                {buyPct}% buys
+                {tr.token.buyPct.replace("{n}", String(buyPct))}
               </span>
               <span className="text-xs font-bold text-[#ff4444]">
-                {100 - buyPct}% sells
+                {tr.token.sellPct.replace("{n}", String(100 - buyPct))}
               </span>
             </div>
           </motion.div>
@@ -254,7 +268,7 @@ export default function TokenSection() {
         >
           <div className="flex items-center justify-between mb-3">
             <h3 className="text-sm font-black text-white/60 uppercase tracking-widest">
-              📈 Real-Time Chart
+              {tr.token.chartLabel}
             </h3>
             <a
               href={`https://dexscreener.com/solana/${CA}`}
@@ -262,7 +276,7 @@ export default function TokenSection() {
               rel="noopener noreferrer"
               className="text-xs text-[#ffd700]/60 hover:text-[#ffd700] transition-colors uppercase tracking-widest"
             >
-              Open Full →
+              {tr.token.openFull}
             </a>
           </div>
           <DexChart pairAddress={data?.pairAddress} />
@@ -278,7 +292,7 @@ export default function TokenSection() {
           <div className="grid md:grid-cols-2 gap-8">
             <div>
               <h3 className="text-xl font-black gradient-text mb-6">
-                Token Details
+                {tr.token.detailsHeading}
               </h3>
               <div className="space-y-3">
                 {tokenInfo.map((t) => (
@@ -300,11 +314,11 @@ export default function TokenSection() {
             <div className="flex flex-col justify-between">
               <div>
                 <h3 className="text-xl font-black gradient-text-gold mb-4">
-                  Contract Address
+                  {tr.token.caHeading}
                 </h3>
                 <div className="glass-red rounded-xl p-4 neon-border-red mb-4">
                   <p className="text-[10px] text-white/40 uppercase tracking-widest mb-2">
-                    Solana CA
+                    {tr.token.caLabel}
                   </p>
                   <p className="text-xs font-mono text-[#ffd700] break-all leading-relaxed">
                     {CA}
@@ -318,7 +332,7 @@ export default function TokenSection() {
                       : "btn-primary text-white"
                   }`}
                 >
-                  {copied ? "✓ Copied!" : "Copy Contract Address"}
+                  {copied ? tr.token.copyOk : tr.token.copyBtn}
                 </button>
               </div>
 
@@ -329,7 +343,7 @@ export default function TokenSection() {
                   rel="noopener noreferrer"
                   className="btn-primary text-white text-xs font-bold py-3 rounded-xl text-center tracking-widest uppercase"
                 >
-                  Buy on Jupiter
+                  {tr.token.buyJup}
                 </a>
                 <a
                   href={`https://dexscreener.com/solana/${CA}`}
@@ -337,7 +351,7 @@ export default function TokenSection() {
                   rel="noopener noreferrer"
                   className="btn-secondary text-xs font-bold py-3 rounded-xl text-center tracking-widest uppercase"
                 >
-                  DexScreener
+                  {tr.token.dex}
                 </a>
               </div>
             </div>

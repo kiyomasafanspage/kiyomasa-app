@@ -3,6 +3,7 @@
 import { motion, useInView } from "framer-motion";
 import { useRef, useState, useEffect } from "react";
 import { useTokenData, fmtUsd } from "@/hooks/useTokenData";
+import { useLang } from "@/contexts/LanguageContext";
 
 /* ── Brand SVGs ── */
 function XLogo({ size = 28 }: { size?: number }) {
@@ -39,8 +40,8 @@ function XCommunityIcon({ size = 28 }: { size?: number }) {
   );
 }
 
-/* ── Channels config ── */
-const channels = [
+/* ── Channels static config (no translatable text) ── */
+const CHANNEL_DEFS = [
   {
     Logo: ({ size }: { size?: number }) => (
       <div
@@ -57,10 +58,8 @@ const channels = [
     ),
     name: "X / Twitter",
     handle: "@KiyomasaMeme",
-    desc: "Follow the latest memes, announcements, and community updates in real-time.",
     href: "https://x.com/KiyomasaMeme",
     color: "#ffffff",
-    label: "Follow",
   },
   {
     Logo: ({ size }: { size?: number }) => (
@@ -78,10 +77,8 @@ const channels = [
     ),
     name: "Telegram",
     handle: "CTO Chat",
-    desc: "Join the core CTO community. Degens only. 24/7 energy. No sleep.",
     href: "https://t.me/kiyomasa_cto_chat",
     color: "#229ED9",
-    label: "Join Chat",
   },
   {
     Logo: ({ size }: { size?: number }) => (
@@ -99,10 +96,8 @@ const channels = [
     ),
     name: "Community Hub",
     handle: "X Community",
-    desc: "Participate in discussions, governance, meme battles, and daily votes.",
     href: "https://x.com/i/communities/1959463470325252358",
     color: "#ffd700",
-    label: "Join Hub",
   },
 ];
 
@@ -138,6 +133,23 @@ export default function CommunitySection() {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: "-100px" });
   const { data } = useTokenData(30_000);
+  const { tr } = useLang();
+
+  const channelDescs = [
+    tr.community.xDesc,
+    tr.community.teleDesc,
+    tr.community.hubDesc,
+  ];
+  const channelLabels = [
+    tr.community.follow,
+    tr.community.joinChat,
+    tr.community.joinHub,
+  ];
+  const channels = CHANNEL_DEFS.map((c, i) => ({
+    ...c,
+    desc: channelDescs[i],
+    label: channelLabels[i],
+  }));
 
   return (
     <section
@@ -162,14 +174,14 @@ export default function CommunitySection() {
           className="text-center mb-14"
         >
           <span className="text-xs tracking-[0.4em] text-[#ffd700]/60 uppercase font-medium">
-            Gorilla Army
+            {tr.community.eyebrow}
           </span>
           <h2 className="text-4xl md:text-6xl font-black mt-3 mb-4">
-            Join The <span className="gradient-text">Movement</span>
+            {tr.community.heading}{" "}
+            <span className="gradient-text">{tr.community.headingAccent}</span>
           </h2>
           <p className="text-white/50 max-w-lg mx-auto text-sm leading-relaxed">
-            The gorilla army grows stronger every day. Pick your channel. Bring
-            the energy.
+            {tr.community.sub}
           </p>
         </motion.div>
 
@@ -229,16 +241,16 @@ export default function CommunitySection() {
                 <span className="relative inline-flex rounded-full h-3 w-3 bg-[#ff2d2d]" />
               </span>
               <h3 className="font-black text-lg gradient-text">
-                Community Activity
+                {tr.community.activityTitle}
               </h3>
             </div>
             <div className="flex items-center gap-2">
               <span className="text-[10px] text-white/30 uppercase tracking-widest">
-                Refreshes every 30s
+                {tr.community.refresh}
               </span>
               <span className="text-xs text-white/20">·</span>
               <span className="text-xs text-[#00ff88]/60 font-bold uppercase tracking-wider">
-                LIVE
+                {tr.community.live}
               </span>
             </div>
           </div>
@@ -255,7 +267,7 @@ export default function CommunitySection() {
                 )}
               </p>
               <p className="text-[10px] text-white/40 uppercase tracking-wider mt-1">
-                Volume 24h
+                {tr.community.volume}
               </p>
             </div>
 
@@ -269,7 +281,7 @@ export default function CommunitySection() {
                 )}
               </p>
               <p className="text-[10px] text-white/40 uppercase tracking-wider mt-1">
-                Transactions
+                {tr.community.txns}
               </p>
             </div>
 
@@ -279,7 +291,7 @@ export default function CommunitySection() {
                 <LiveCounter base={240} delta={3} suffix="+" />
               </p>
               <p className="text-[10px] text-white/40 uppercase tracking-wider mt-1">
-                X Posts Today
+                {tr.community.xposts}
               </p>
             </div>
 
@@ -289,7 +301,7 @@ export default function CommunitySection() {
                 <LiveCounter base={626} delta={3} suffix="+" />
               </p>
               <p className="text-[10px] text-white/40 uppercase tracking-wider mt-1">
-                Active Members
+                {tr.community.members}
               </p>
             </div>
           </div>
@@ -332,7 +344,7 @@ export default function CommunitySection() {
 
           {/* Powered by */}
           <p className="text-[10px] text-white/20 text-center mt-4 tracking-widest uppercase">
-            On-chain data powered by{" "}
+            {tr.community.poweredBy}{" "}
             <a
               href="https://dexscreener.com"
               target="_blank"

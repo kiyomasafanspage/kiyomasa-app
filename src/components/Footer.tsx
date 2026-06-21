@@ -1,11 +1,13 @@
 "use client";
 
+import { useLang } from "@/contexts/LanguageContext";
+
 const nav = [
-  { label: "Home", href: "#home" },
-  { label: "About", href: "#about" },
-  { label: "Roadmap", href: "#roadmap" },
-  { label: "Community", href: "#community" },
-  { label: "Docs", href: "#docs" },
+  { labelKey: "Home", href: "#home" },
+  { labelKey: "About", href: "#about" },
+  { labelKey: "Roadmap", href: "#roadmap" },
+  { labelKey: "Community", href: "#community" },
+  { labelKey: "Docs", href: "#docs" },
 ];
 
 function XIcon() {
@@ -56,6 +58,7 @@ const socials = [
 ];
 
 export default function Footer() {
+  const { tr } = useLang();
   return (
     <footer className="relative border-t border-white/5 jp-pattern">
       <div className="absolute inset-0 bg-gradient-to-t from-[#050505] to-transparent pointer-events-none" />
@@ -76,24 +79,23 @@ export default function Footer() {
               </div>
             </div>
             <p className="text-white/40 text-sm leading-relaxed">
-              Japan&apos;s gorilla meme movement. Community-driven. Built by
-              believers. Powered by memes.
+              {tr.footer.tagline}
             </p>
           </div>
 
           {/* Navigation */}
           <div>
             <p className="text-xs uppercase tracking-[0.3em] text-white/30 font-medium mb-4">
-              Navigation
+              {tr.footer.navLabel}
             </p>
             <ul className="space-y-2">
               {nav.map((n) => (
-                <li key={n.label}>
+                <li key={n.labelKey}>
                   <a
                     href={n.href}
                     className="text-sm text-white/50 hover:text-[#ffd700] transition-colors"
                   >
-                    {n.label}
+                    {n.labelKey}
                   </a>
                 </li>
               ))}
@@ -103,7 +105,7 @@ export default function Footer() {
           {/* Community */}
           <div>
             <p className="text-xs uppercase tracking-[0.3em] text-white/30 font-medium mb-4">
-              Community
+              {tr.footer.communityLabel}
             </p>
             <div className="space-y-3">
               {socials.map((s) => (
@@ -144,12 +146,14 @@ export default function Footer() {
         {/* Bottom bar */}
         <div className="flex flex-col md:flex-row items-center justify-between gap-4">
           <p className="text-xs text-white/30 text-center md:text-left">
-            © 2026 KIYOMASA MEME. Built by the community. Powered by memes. 🦍🇯🇵
+            {tr.footer.copyright}
           </p>
           <div className="flex items-center gap-2">
-            <span className="text-xs text-white/20">Not financial advice.</span>
+            <span className="text-xs text-white/20">
+              {tr.footer.disclaimer}
+            </span>
             <span className="text-xs text-white/20">•</span>
-            <span className="text-xs text-white/20">DYOR.</span>
+            <span className="text-xs text-white/20">{tr.footer.dyor}</span>
           </div>
         </div>
       </div>

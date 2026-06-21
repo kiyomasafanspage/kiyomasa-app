@@ -2,12 +2,14 @@
 
 import { useEffect, useRef, useState, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useLang } from "@/contexts/LanguageContext";
 
 const SRC = "/assets/sounds/the_mountain-crypto-systems-141482.mp3";
 
 export default function MusicPlayer() {
   const [playing, setPlaying] = useState(false);
   const [loading, setLoading] = useState(false);
+  const { tr } = useLang();
 
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -399,7 +401,7 @@ export default function MusicPlayer() {
           className="text-[9px] uppercase tracking-[0.22em] font-black transition-colors duration-500"
           style={{ color: playing ? "#ff2d2d" : "rgba(255,255,255,0.2)" }}
         >
-          {playing ? "♪ PLAYING" : "BGM"}
+          {playing ? tr.music.playing : tr.music.bgm}
         </span>
       </div>
     </>

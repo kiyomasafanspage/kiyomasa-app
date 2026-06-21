@@ -4,6 +4,7 @@ import { motion, useInView } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 import { useTokenData, fmtUsd } from "@/hooks/useTokenData";
 import type { TokenData } from "@/hooks/useTokenData";
+import { useLang } from "@/contexts/LanguageContext";
 
 /* ── score calc ── */
 function calcScore(d: TokenData): number {
@@ -18,19 +19,22 @@ function calcScore(d: TokenData): number {
   return Math.max(0, Math.min(100, 50 + buyScore + volScore + priceScore - 8));
 }
 
-const LABELS = [
-  { min: 0, max: 25, label: "REKT 💀", color: "#ff2d2d" },
-  { min: 25, max: 42, label: "BEARISH 🐻", color: "#ff6b35" },
-  { min: 42, max: 58, label: "NEUTRAL 😐", color: "#ffd700" },
-  { min: 58, max: 73, label: "BULLISH 🔥", color: "#7fff00" },
-  { min: 73, max: 88, label: "PUMPING 🚀", color: "#00e5ff" },
-  { min: 88, max: 101, label: "TO THE MOON 🌙", color: "#00ff88" },
-];
-const getLabel = (s: number) =>
-  LABELS.find((l) => s >= l.min && s < l.max) ?? LABELS[2];
+type PumpKey = "rekt" | "bearish" | "neutral" | "bullish" | "pumping" | "moon";
+const LABEL_DEFS: { min: number; max: number; key: PumpKey; color: string }[] =
+  [
+    { min: 0, max: 25, key: "rekt", color: "#ff2d2d" },
+    { min: 25, max: 42, key: "bearish", color: "#ff6b35" },
+    { min: 42, max: 58, key: "neutral", color: "#ffd700" },
+    { min: 58, max: 73, key: "bullish", color: "#7fff00" },
+    { min: 73, max: 88, key: "pumping", color: "#00e5ff" },
+    { min: 88, max: 101, key: "moon", color: "#00ff88" },
+  ];
+const getLabelDef = (s: number) =>
+  LABEL_DEFS.find((l) => s >= l.min && s < l.max) ?? LABEL_DEFS[2];
 
 /* ── animated SVG gauge ── */
 function Gauge({ target, inView }: { target: number; inView: boolean }) {
+  const { tr } = useLang();
   const [score, setScore] = useState(0);
   const animRef = useRef(0);
 
@@ -59,7 +63,8 @@ function Gauge({ target, inView }: { target: number; inView: boolean }) {
   const nLen = 58;
   const nx = cx + Math.cos(angle) * nLen;
   const ny = cy - Math.sin(angle) * nLen;
-  const lbl = getLabel(score);
+  const lblDef = getLabelDef(score);
+  const lblText = tr.pump[lblDef.key];
 
   return (
     <div className="flex flex-col items-center">
@@ -105,7 +110,7 @@ function Gauge({ target, inView }: { target: number; inView: boolean }) {
           y1={cy}
           x2={nx}
           y2={ny}
-          stroke={lbl.color}
+          stroke={lblDef.color}
           strokeWidth={6}
           strokeLinecap="round"
           opacity={0.15}
@@ -118,7 +123,7 @@ function Gauge({ target, inView }: { target: number; inView: boolean }) {
           x={cx}
           y={cy - 22}
           textAnchor="middle"
-          fill={lbl.color}
+          fill={lblDef.color}
           fontSize="28"
           fontWeight="900"
           fontFamily="system-ui, sans-serif"
@@ -134,7 +139,7 @@ function Gauge({ target, inView }: { target: number; inView: boolean }) {
           fontFamily="system-ui, sans-serif"
           letterSpacing="2"
         >
-          PUMP SCORE
+          {tr.pump.score}
         </text>
         {/* tick marks */}
         {[0, 25, 50, 75, 100].map((v) => {
@@ -158,11 +163,11 @@ function Gauge({ target, inView }: { target: number; inView: boolean }) {
       </svg>
       <motion.p
         className="text-base font-black tracking-wide mt-1"
-        style={{ color: lbl.color }}
+        style={{ color: lblDef.color }}
         animate={{ scale: [1, 1.05, 1] }}
         transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
       >
-        {lbl.label}
+        {lblText}
       </motion.p>
     </div>
   );
@@ -194,11 +199,12 @@ export default function PumpMeter() {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: "-80px" });
   const { data, loading } = useTokenData(30_000);
+  const { tr } = useLang();
 
   const score = data ? calcScore(data) : 50;
   const total = data ? data.buys24h + data.sells24h : 0;
   const buyPct = total > 0 ? Math.round((data!.buys24h / total) * 100) : 50;
-  const lbl = getLabel(score);
+  const lblDef = getLabelDef(score);
 
   const p1h = data?.priceChange1h ?? 0;
   const p24h = data?.priceChange24h ?? 0;
@@ -225,14 +231,14 @@ export default function PumpMeter() {
           className="text-center mb-12"
         >
           <span className="text-xs tracking-[0.4em] text-[#ffd700]/60 uppercase font-medium">
-            Real-Time · On-Chain
+            {tr.pump.eyebrow}
           </span>
           <h2 className="text-4xl md:text-6xl font-black mt-3 mb-4">
-            Pump<span className="gradient-text">-o-Meter</span>
+            {tr.pump.heading}
+            <span className="gradient-text">{tr.pump.headingAccent}</span>
           </h2>
           <p className="text-white/45 max-w-md mx-auto text-sm">
-            Composite score dari buy pressure, volume, dan price momentum.
-            Update setiap 30 detik.
+            {tr.pump.sub}
           </p>
         </motion.div>
 
@@ -246,17 +252,17 @@ export default function PumpMeter() {
               className="grid grid-cols-2 md:grid-cols-1 gap-3"
             >
               <StatPill
-                label="Volume 24h"
+                label={tr.pump.volume}
                 value={loading ? "—" : fmtUsd(data?.volume24h ?? 0)}
                 color="#ffd700"
               />
               <StatPill
-                label="Liquidity"
+                label={tr.pump.liquidity}
                 value={loading ? "—" : fmtUsd(data?.liquidity ?? 0)}
                 color="#a78bfa"
               />
               <StatPill
-                label="Market Cap"
+                label={tr.pump.marketCap}
                 value={loading ? "—" : fmtUsd(data?.marketCap ?? 0)}
                 color="#ff6b6b"
               />
@@ -275,8 +281,12 @@ export default function PumpMeter() {
               {!loading && total > 0 && (
                 <div className="w-full max-w-[200px]">
                   <div className="flex justify-between text-[10px] text-white/30 uppercase tracking-widest mb-1">
-                    <span>Buy {buyPct}%</span>
-                    <span>Sell {100 - buyPct}%</span>
+                    <span>
+                      {tr.pump.buy} {buyPct}%
+                    </span>
+                    <span>
+                      {tr.pump.sell} {100 - buyPct}%
+                    </span>
                   </div>
                   <div className="h-1.5 rounded-full overflow-hidden bg-white/5">
                     <div
@@ -299,17 +309,17 @@ export default function PumpMeter() {
               className="grid grid-cols-2 md:grid-cols-1 gap-3"
             >
               <StatPill
-                label="Price 1h"
+                label={tr.pump.price1h}
                 value={loading ? "—" : pFmt(p1h)}
                 color={pColor(p1h)}
               />
               <StatPill
-                label="Price 24h"
+                label={tr.pump.price24h}
                 value={loading ? "—" : pFmt(p24h)}
                 color={pColor(p24h)}
               />
               <StatPill
-                label="Transactions 24h"
+                label={tr.pump.txns}
                 value={loading ? "—" : total.toLocaleString()}
                 color="#00e5ff"
               />
@@ -324,9 +334,9 @@ export default function PumpMeter() {
             className="mt-8 pt-6 border-t border-white/5 text-center"
           >
             <p className="text-xs text-white/25 uppercase tracking-widest">
-              Verdict —{" "}
-              <span className="font-black" style={{ color: lbl.color }}>
-                {lbl.label}
+              {tr.pump.verdict} —{" "}
+              <span className="font-black" style={{ color: lblDef.color }}>
+                {tr.pump[lblDef.key]}
               </span>
             </p>
           </motion.div>

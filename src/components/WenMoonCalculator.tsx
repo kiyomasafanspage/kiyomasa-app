@@ -3,22 +3,19 @@
 import { motion, useInView, AnimatePresence } from "framer-motion";
 import { useRef, useState } from "react";
 import { useTokenData, fmtPrice } from "@/hooks/useTokenData";
+import { useLang } from "@/contexts/LanguageContext";
 
 const MULTIPLIERS = [2, 5, 10, 50, 100];
 
-function wagmiMsg(roi: number): { text: string; color: string } {
-  if (roi < 10)
-    return { text: "Basically flat 😴 Hold longer bro", color: "#ffd700" };
-  if (roi < 100) return { text: "Solid. WAGMI 🤝", color: "#7fff00" };
-  if (roi < 500)
-    return { text: "BASED. You're making it 🔥", color: "#00e5ff" };
-  if (roi < 1000)
-    return { text: "MASSIVE BAGS. Future millionaire 🤑", color: "#ff6bff" };
-  return {
-    text: "KIYOMASA TO THE MOON!!! 🚀🌙 NGMI if you sell",
-    color: "#00ff88",
-  };
+function wagmiIdx(roi: number): number {
+  if (roi < 10) return 0;
+  if (roi < 100) return 1;
+  if (roi < 500) return 2;
+  if (roi < 1000) return 3;
+  return 4;
 }
+
+const WAGMI_COLORS = ["#ffd700", "#7fff00", "#00e5ff", "#ff6bff", "#00ff88"];
 
 function fmtNum(n: number): string {
   if (n >= 1_000_000) return `$${(n / 1_000_000).toFixed(2)}M`;
@@ -107,6 +104,7 @@ export default function WenMoonCalculator() {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: "-80px" });
   const { data } = useTokenData(30_000);
+  const { tr } = useLang();
 
   const [amount, setAmount] = useState("1000000");
   const [mult, setMult] = useState<number>(10);
@@ -125,7 +123,8 @@ export default function WenMoonCalculator() {
   const targetVal = tokens * targetPrice;
   const profit = targetVal - currentVal;
   const roi = currentVal > 0 ? (profit / currentVal) * 100 : 0;
-  const msg = wagmiMsg(roi);
+  const wagmiI = wagmiIdx(roi);
+  const msg = { text: tr.calc.wagmi[wagmiI], color: WAGMI_COLORS[wagmiI] };
 
   const handleCalc = () => {
     if (!currentPrice || !tokens) return;
@@ -160,14 +159,14 @@ export default function WenMoonCalculator() {
           className="text-center mb-12"
         >
           <span className="text-xs tracking-[0.4em] text-[#ffd700]/60 uppercase font-medium">
-            Dream Big · WAGMI
+            {tr.calc.eyebrow}
           </span>
           <h2 className="text-4xl md:text-6xl font-black mt-3 mb-4">
-            Wen <span className="gradient-text-gold">Moon?</span> 🌙
+            {tr.calc.heading}{" "}
+            <span className="gradient-text-gold">{tr.calc.headingAccent}</span>{" "}
+            🌙
           </h2>
-          <p className="text-white/45 text-sm">
-            Masukkan jumlah token, pilih target, dan lihat masa depanmu.
-          </p>
+          <p className="text-white/45 text-sm">{tr.calc.sub}</p>
         </motion.div>
 
         <motion.div
@@ -180,15 +179,15 @@ export default function WenMoonCalculator() {
           <div className="flex items-center justify-between mb-6 pb-4 border-b border-white/5">
             <div>
               <p className="text-xs text-white/35 uppercase tracking-widest">
-                Current Price
+                {tr.calc.currentPrice}
               </p>
               <p className="text-xl font-black gradient-text-gold">
-                {currentPrice ? fmtPrice(currentPrice) : "Loading…"}
+                {currentPrice ? fmtPrice(currentPrice) : tr.calc.loading}
               </p>
             </div>
             <div className="text-right">
               <p className="text-xs text-white/35 uppercase tracking-widest">
-                Token
+                {tr.calc.token}
               </p>
               <p className="text-xl font-black text-white">$KIYOMASA</p>
             </div>
@@ -197,7 +196,7 @@ export default function WenMoonCalculator() {
           {/* Token amount input */}
           <div className="mb-6">
             <label className="text-xs text-white/40 uppercase tracking-widest block mb-2">
-              How many $KIYOMASA do you hold?
+              {tr.calc.amountLabel}
             </label>
             <input
               type="text"
@@ -206,7 +205,7 @@ export default function WenMoonCalculator() {
                 setAmount(e.target.value);
                 setShowResult(false);
               }}
-              placeholder="e.g. 1000000"
+              placeholder={tr.calc.placeholder}
               className="w-full glass rounded-xl px-4 py-3 text-white font-bold text-lg outline-none border border-white/10 focus:border-[#ffd700]/40 transition-colors"
               style={{ background: "rgba(255,255,255,0.04)" }}
             />
@@ -215,7 +214,7 @@ export default function WenMoonCalculator() {
           {/* Multiplier */}
           <div className="mb-8">
             <label className="text-xs text-white/40 uppercase tracking-widest block mb-3">
-              Target Multiplier
+              {tr.calc.multLabel}
             </label>
             <div className="flex flex-wrap gap-2">
               {MULTIPLIERS.map((m) => (
@@ -264,7 +263,7 @@ export default function WenMoonCalculator() {
                       }
                 }
               >
-                Custom
+                {tr.calc.custom}
               </button>
             </div>
 
@@ -302,7 +301,7 @@ export default function WenMoonCalculator() {
                   : "none",
             }}
           >
-            🔮 Calculate My Moon Bag
+            {tr.calc.calcBtn}
           </motion.button>
 
           {/* Results */}
@@ -318,25 +317,25 @@ export default function WenMoonCalculator() {
               >
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
                   <ResultCard
-                    label="Current Value"
+                    label={tr.calc.currentVal}
                     value={fmtNum(currentVal)}
                     accent="#ffd700"
                   />
                   <ResultCard
-                    label={`At ${activeMult}x Target`}
+                    label={tr.calc.targetAt.replace("{n}", String(activeMult))}
                     value={fmtNum(targetVal)}
                     accent="#00e5ff"
                   />
                   <ResultCard
-                    label="Your Profit"
+                    label={tr.calc.profit}
                     value={fmtNum(profit)}
                     sub={`+${roi.toFixed(0)}% ROI`}
                     accent="#00ff88"
                   />
                   <ResultCard
-                    label="Target Price"
+                    label={tr.calc.targetPrice}
                     value={fmtPrice(targetPrice)}
-                    sub={`${activeMult}x current`}
+                    sub={tr.calc.targetSub.replace("{n}", String(activeMult))}
                     accent="#a78bfa"
                   />
                 </div>
@@ -353,7 +352,7 @@ export default function WenMoonCalculator() {
                     {msg.text}
                   </p>
                   <p className="text-xs text-white/25 mt-1">
-                    Not financial advice. Do your own research. 🦍
+                    {tr.calc.disclaimer}
                   </p>
                 </motion.div>
               </motion.div>
