@@ -1,11 +1,12 @@
 "use client";
 
-import { motion, useInView } from "framer-motion";
-import { useRef } from "react";
+import { motion, useInView, AnimatePresence } from "framer-motion";
+import { useRef, useState } from "react";
 
 export default function NarrativeSection() {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: "-80px" });
+  const [open, setOpen] = useState(true);
 
   return (
     <section
@@ -24,193 +25,245 @@ export default function NarrativeSection() {
       />
 
       <div className="max-w-7xl mx-auto">
-        {/* NARRATIVE eyebrow label */}
-        <motion.div
-          initial={{ opacity: 0, x: -16 }}
-          animate={inView ? { opacity: 1, x: 0 } : {}}
+        {/* Collapse header */}
+        <motion.button
+          initial={{ opacity: 0, y: -12 }}
+          animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.5 }}
-          className="flex items-center gap-3 mb-10 md:mb-14"
+          onClick={() => setOpen((p) => !p)}
+          className="w-full flex items-center justify-between mb-6"
+          style={{ outline: "none" }}
         >
+          <div className="flex items-center gap-3">
+            <div
+              className="h-px"
+              style={{ width: 36, background: "rgba(255,255,255,0.3)" }}
+            />
+            <span
+              className="text-[10px] tracking-[0.35em] uppercase font-semibold"
+              style={{ color: "rgba(255,255,255,0.35)" }}
+            >
+              Narrative
+            </span>
+          </div>
           <div
-            className="h-px"
-            style={{ width: 36, background: "rgba(255,255,255,0.3)" }}
-          />
-          <span
-            className="text-[10px] tracking-[0.35em] uppercase font-semibold"
-            style={{ color: "rgba(255,255,255,0.35)" }}
+            className="w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200"
+            style={{
+              background: open
+                ? "rgba(255,255,255,0.08)"
+                : "rgba(255,255,255,0.03)",
+              border: "1px solid rgba(255,255,255,0.1)",
+              color: "rgba(255,255,255,0.5)",
+            }}
           >
-            Narrative
-          </span>
-        </motion.div>
-
-        {/* 3-column editorial grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-[1.15fr_1fr_268px] gap-10 lg:gap-14 items-center">
-          {/* ── Col 1: Big headline ── */}
-          <motion.div
-            initial={{ opacity: 0, y: 28 }}
-            animate={inView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.85, delay: 0.1 }}
-          >
-            <h2
-              className="font-black text-white leading-[0.88] tracking-tight"
-              style={{ fontSize: "clamp(40px, 6vw, 76px)" }}
-            >
-              Not just
-              <br />
-              Shabani&apos;s son.
-              <br />
-              <span style={{ color: "rgba(255,255,255,0.85)" }}>
-                Kiyomasa&apos;s
-                <br />
-                own story is
-                <br />
-                beginning.
-              </span>
-            </h2>
-          </motion.div>
-
-          {/* ── Col 2: Body copy ── */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={inView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.75, delay: 0.28 }}
-            className="space-y-6"
-          >
-            <p
-              className="text-base leading-relaxed font-medium"
-              style={{ color: "rgba(255,255,255,0.75)" }}
-            >
-              Imagine being born as the son of a legend.
-            </p>
-            <p
-              className="text-base leading-relaxed"
-              style={{ color: "rgba(255,255,255,0.55)" }}
-            >
-              For years, Kiyomasa was not seen as &ldquo;Kiyomasa.&rdquo; He was
-              seen only as the son of Shabani, Japan&apos;s legendary handsome
-              gorilla.
-            </p>
-            <p
-              className="text-base leading-relaxed"
-              style={{ color: "rgba(255,255,255,0.55)" }}
-            >
-              But he kept growing. Quietly. Slowly. And now people are finally
-              looking at him differently.
-            </p>
-
-            {/* Decorative accent line */}
-            <div
-              className="mt-8 h-px"
+            <svg
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.5"
+              strokeLinecap="round"
               style={{
-                width: 64,
-                background:
-                  "linear-gradient(90deg, rgba(200,169,75,0.5), transparent)",
-              }}
-            />
-          </motion.div>
-
-          {/* ── Col 3: Video card ── */}
-          <motion.div
-            initial={{ opacity: 0, y: 30, scale: 0.95 }}
-            animate={inView ? { opacity: 1, y: 0, scale: 1 } : {}}
-            transition={{ duration: 0.9, delay: 0.42, ease: "easeOut" }}
-            className="relative mx-auto"
-            style={{ width: "100%", maxWidth: 268 }}
-          >
-            {/* Glow halo behind card */}
-            <div
-              className="absolute -inset-6 -z-10 blur-3xl opacity-30"
-              style={{
-                background:
-                  "radial-gradient(ellipse at center, rgba(255,255,255,0.25) 0%, transparent 70%)",
-              }}
-            />
-
-            {/* Card wrapper */}
-            <div
-              className="relative overflow-hidden"
-              style={{
-                borderRadius: 24,
-                border: "7px solid rgba(255,255,255,0.88)",
-                boxShadow:
-                  "0 32px 72px rgba(0,0,0,0.75), 0 8px 24px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.15)",
+                transform: open ? "rotate(180deg)" : "rotate(0deg)",
+                transition: "transform 0.3s",
               }}
             >
-              {/* VIDEO badge */}
-              <div
-                className="absolute top-3.5 left-3.5 z-20 flex items-center gap-1.5"
-                style={{
-                  background: "rgba(0,0,0,0.72)",
-                  border: "1px solid rgba(255,255,255,0.22)",
-                  borderRadius: 6,
-                  padding: "4px 8px",
-                  backdropFilter: "blur(8px)",
-                }}
-              >
-                <span
-                  className="block rounded-full"
-                  style={{
-                    width: 6,
-                    height: 6,
-                    background: "#fff",
-                    boxShadow: "0 0 6px rgba(255,255,255,0.8)",
-                  }}
-                />
-                <span
-                  className="font-black uppercase"
-                  style={{
-                    fontSize: 9,
-                    letterSpacing: "0.2em",
-                    color: "#fff",
-                  }}
+              <polyline points="6 9 12 15 18 9" />
+            </svg>
+          </div>
+        </motion.button>
+
+        {/* Divider */}
+        <div
+          className="w-full h-px mb-10 md:mb-14"
+          style={{
+            background:
+              "linear-gradient(90deg, rgba(255,255,255,0.08), transparent)",
+          }}
+        />
+
+        {/* 3-column editorial grid — collapsible */}
+        <AnimatePresence initial={false}>
+          {open && (
+            <motion.div
+              key="narrative-body"
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: "auto" }}
+              exit={{ opacity: 0, height: 0 }}
+              transition={{ duration: 0.4, ease: "easeInOut" }}
+              style={{ overflow: "hidden" }}
+            >
+              <div className="grid grid-cols-1 lg:grid-cols-[1.15fr_1fr_268px] gap-10 lg:gap-14 items-center">
+                {/* ── Col 1: Big headline ── */}
+                <motion.div
+                  initial={{ opacity: 0, y: 28 }}
+                  animate={inView ? { opacity: 1, y: 0 } : {}}
+                  transition={{ duration: 0.85, delay: 0.1 }}
                 >
-                  VIDEO
-                </span>
-              </div>
+                  <h2
+                    className="font-black text-white leading-[0.88] tracking-tight"
+                    style={{ fontSize: "clamp(40px, 6vw, 76px)" }}
+                  >
+                    Not just
+                    <br />
+                    Shabani&apos;s son.
+                    <br />
+                    <span style={{ color: "rgba(255,255,255,0.85)" }}>
+                      Kiyomasa&apos;s
+                      <br />
+                      own story is
+                      <br />
+                      beginning.
+                    </span>
+                  </h2>
+                </motion.div>
 
-              {/* Video element */}
-              <div
-                className="relative overflow-hidden"
-                style={{ aspectRatio: "3/4", background: "#0a0a0a" }}
-              >
-                <video
-                  autoPlay
-                  muted
-                  loop
-                  playsInline
-                  src="/assets/video/video%20narative.mp4"
-                  className="absolute inset-0 w-full h-full"
-                  style={{ objectFit: "cover", objectPosition: "center" }}
-                />
-                {/* Inner vignette */}
-                <div
-                  className="absolute inset-0 pointer-events-none"
-                  style={{
-                    background:
-                      "radial-gradient(ellipse 80% 80% at 50% 50%, transparent 50%, rgba(0,0,0,0.35) 100%)",
-                  }}
-                />
-              </div>
-
-              {/* VIRAL MOMENT footer */}
-              <div
-                className="flex items-center gap-2 px-4 py-3"
-                style={{ background: "rgba(255,255,255,0.95)" }}
-              >
-                <div
-                  className="w-1.5 h-1.5 rounded-full"
-                  style={{ background: "#000" }}
-                />
-                <span
-                  className="font-black uppercase tracking-widest text-black"
-                  style={{ fontSize: 9 }}
+                {/* ── Col 2: Body copy ── */}
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={inView ? { opacity: 1, y: 0 } : {}}
+                  transition={{ duration: 0.75, delay: 0.28 }}
+                  className="space-y-6"
                 >
-                  Viral Moment
-                </span>
+                  <p
+                    className="text-base leading-relaxed font-medium"
+                    style={{ color: "rgba(255,255,255,0.75)" }}
+                  >
+                    Imagine being born as the son of a legend.
+                  </p>
+                  <p
+                    className="text-base leading-relaxed"
+                    style={{ color: "rgba(255,255,255,0.55)" }}
+                  >
+                    For years, Kiyomasa was not seen as &ldquo;Kiyomasa.&rdquo;
+                    He was seen only as the son of Shabani, Japan&apos;s
+                    legendary handsome gorilla.
+                  </p>
+                  <p
+                    className="text-base leading-relaxed"
+                    style={{ color: "rgba(255,255,255,0.55)" }}
+                  >
+                    But he kept growing. Quietly. Slowly. And now people are
+                    finally looking at him differently.
+                  </p>
+
+                  {/* Decorative accent line */}
+                  <div
+                    className="mt-8 h-px"
+                    style={{
+                      width: 64,
+                      background:
+                        "linear-gradient(90deg, rgba(200,169,75,0.5), transparent)",
+                    }}
+                  />
+                </motion.div>
+
+                {/* ── Col 3: Video card ── */}
+                <motion.div
+                  initial={{ opacity: 0, y: 30, scale: 0.95 }}
+                  animate={inView ? { opacity: 1, y: 0, scale: 1 } : {}}
+                  transition={{ duration: 0.9, delay: 0.42, ease: "easeOut" }}
+                  className="relative mx-auto"
+                  style={{ width: "100%", maxWidth: 268 }}
+                >
+                  {/* Glow halo behind card */}
+                  <div
+                    className="absolute -inset-6 -z-10 blur-3xl opacity-30"
+                    style={{
+                      background:
+                        "radial-gradient(ellipse at center, rgba(255,255,255,0.25) 0%, transparent 70%)",
+                    }}
+                  />
+
+                  {/* Card wrapper */}
+                  <div
+                    className="relative overflow-hidden"
+                    style={{
+                      borderRadius: 24,
+                      border: "7px solid rgba(255,255,255,0.88)",
+                      boxShadow:
+                        "0 32px 72px rgba(0,0,0,0.75), 0 8px 24px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.15)",
+                    }}
+                  >
+                    {/* VIDEO badge */}
+                    <div
+                      className="absolute top-3.5 left-3.5 z-20 flex items-center gap-1.5"
+                      style={{
+                        background: "rgba(0,0,0,0.72)",
+                        border: "1px solid rgba(255,255,255,0.22)",
+                        borderRadius: 6,
+                        padding: "4px 8px",
+                        backdropFilter: "blur(8px)",
+                      }}
+                    >
+                      <span
+                        className="block rounded-full"
+                        style={{
+                          width: 6,
+                          height: 6,
+                          background: "#fff",
+                          boxShadow: "0 0 6px rgba(255,255,255,0.8)",
+                        }}
+                      />
+                      <span
+                        className="font-black uppercase"
+                        style={{
+                          fontSize: 9,
+                          letterSpacing: "0.2em",
+                          color: "#fff",
+                        }}
+                      >
+                        VIDEO
+                      </span>
+                    </div>
+
+                    {/* Video element */}
+                    <div
+                      className="relative overflow-hidden"
+                      style={{ aspectRatio: "3/4", background: "#0a0a0a" }}
+                    >
+                      <video
+                        autoPlay
+                        muted
+                        loop
+                        playsInline
+                        src="/assets/video/video%20narative.mp4"
+                        className="absolute inset-0 w-full h-full"
+                        style={{ objectFit: "cover", objectPosition: "center" }}
+                      />
+                      {/* Inner vignette */}
+                      <div
+                        className="absolute inset-0 pointer-events-none"
+                        style={{
+                          background:
+                            "radial-gradient(ellipse 80% 80% at 50% 50%, transparent 50%, rgba(0,0,0,0.35) 100%)",
+                        }}
+                      />
+                    </div>
+
+                    {/* VIRAL MOMENT footer */}
+                    <div
+                      className="flex items-center gap-2 px-4 py-3"
+                      style={{ background: "rgba(255,255,255,0.95)" }}
+                    >
+                      <div
+                        className="w-1.5 h-1.5 rounded-full"
+                        style={{ background: "#000" }}
+                      />
+                      <span
+                        className="font-black uppercase tracking-widest text-black"
+                        style={{ fontSize: 9 }}
+                      >
+                        Viral Moment
+                      </span>
+                    </div>
+                  </div>
+                </motion.div>
               </div>
-            </div>
-          </motion.div>
-        </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
 
       {/* Subtle bottom divider */}

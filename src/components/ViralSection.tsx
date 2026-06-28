@@ -5,7 +5,7 @@ import { useRef } from "react";
 import Image from "next/image";
 import { useLang } from "@/contexts/LanguageContext";
 
-/* ── Platform SVG logos ── */
+/* ── YouTube logo ── */
 function YoutubeLogo() {
   return (
     <svg width="20" height="14" viewBox="0 0 20 14" fill="none">
@@ -18,89 +18,32 @@ function YoutubeLogo() {
   );
 }
 
-function InstagramLogo() {
-  return (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-      <defs>
-        <linearGradient id="ig-grad" x1="0%" y1="100%" x2="100%" y2="0%">
-          <stop offset="0%" stopColor="#f09433" />
-          <stop offset="25%" stopColor="#e6683c" />
-          <stop offset="50%" stopColor="#dc2743" />
-          <stop offset="75%" stopColor="#cc2366" />
-          <stop offset="100%" stopColor="#bc1888" />
-        </linearGradient>
-      </defs>
-      <rect x="2" y="2" width="20" height="20" rx="5" fill="url(#ig-grad)" />
-      <circle
-        cx="12"
-        cy="12"
-        r="5"
-        stroke="white"
-        strokeWidth="1.8"
-        fill="none"
-      />
-      <circle cx="17.5" cy="6.5" r="1.2" fill="white" />
-    </svg>
-  );
-}
-
-function XLogo() {
-  return (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="white">
-      <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.73-8.835L1.254 2.25H8.08l4.253 5.622 5.912-5.622Zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
-    </svg>
-  );
-}
-
-/* ── Uniform B&W style for all cards ── */
 const BW = {
   accent: "rgba(255,255,255,0.75)",
   bg: "rgba(255,255,255,0.03)",
   border: "rgba(255,255,255,0.1)",
 } as const;
 
-/* ── Individual media cards ── */
 const VIDEOS = [
   {
-    id: "youtube",
+    id: "Z8sYJSvJwMo",
     url: "https://youtu.be/Z8sYJSvJwMo",
     thumbnail: "https://img.youtube.com/vi/Z8sYJSvJwMo/hqdefault.jpg",
-    labelKey: "youtube" as const,
-    Logo: YoutubeLogo,
-    accentColor: BW.accent,
-    bgGradient: BW.bg,
-    borderColor: BW.border,
-    useImg: true,
+    desc: "Kiyomasa going viral worldwide — the gorilla the internet simply can't ignore.",
   },
   {
-    id: "instagram",
-    url: "https://www.instagram.com/reel/DZUJ3BHvbD3/",
-    thumbnail: null,
-    labelKey: "instagram" as const,
-    Logo: InstagramLogo,
-    accentColor: BW.accent,
-    bgGradient: BW.bg,
-    borderColor: BW.border,
-    useImg: false,
+    id: "ADl_Z2DeUUU",
+    url: "https://youtu.be/ADl_Z2DeUUU",
+    thumbnail: "https://img.youtube.com/vi/ADl_Z2DeUUU/hqdefault.jpg",
+    desc: "The community speaks. Watch the movement grow in real time across every platform.",
   },
   {
-    id: "twitter",
-    url: "https://x.com/rt_com/status/2064319271711490185",
-    thumbnail: null,
-    labelKey: "twitter" as const,
-    Logo: XLogo,
-    accentColor: BW.accent,
-    bgGradient: BW.bg,
-    borderColor: BW.border,
-    useImg: false,
+    id: "ke9KIlY-Ejo",
+    url: "https://youtu.be/ke9KIlY-Ejo",
+    thumbnail: "https://img.youtube.com/vi/ke9KIlY-Ejo/hqdefault.jpg",
+    desc: "From zoo to trending — Kiyomasa's rise captured by fans and creators worldwide.",
   },
 ] as const;
-
-/* Gorilla emoji overlay for no-thumbnail cards */
-const PLATFORM_EMOJI: Record<string, string> = {
-  instagram: "🦍",
-  twitter: "🐦‍⬛",
-};
 
 function VideoCard({
   video,
@@ -114,121 +57,116 @@ function VideoCard({
   watchLabel: string;
 }) {
   return (
-    <motion.a
-      href={video.url}
-      target="_blank"
-      rel="noopener noreferrer"
+    <motion.div
       initial={{ opacity: 0, y: 40 }}
       animate={inView ? { opacity: 1, y: 0 } : {}}
       transition={{ duration: 0.6, delay: index * 0.12 }}
-      className="group flex flex-col rounded-2xl overflow-hidden cursor-pointer"
-      style={{
-        background: video.bgGradient,
-        border: `1px solid ${video.borderColor}`,
-        backdropFilter: "blur(12px)",
-      }}
+      className="flex flex-col"
     >
-      {/* Thumbnail area */}
-      <div className="relative w-full aspect-video overflow-hidden bg-black/40">
-        {video.useImg && video.thumbnail ? (
-          <>
-            <Image
-              src={video.thumbnail}
-              alt={video.id}
-              fill
-              className="object-cover group-hover:scale-105 transition-transform duration-500"
-              unoptimized
-              style={{ filter: "grayscale(100%)" }}
-            />
-            <div className="absolute inset-0 bg-black/30 group-hover:bg-black/15 transition-colors duration-300" />
-          </>
-        ) : (
-          /* Branded placeholder for Instagram / X */
-          <div
-            className="absolute inset-0 flex flex-col items-center justify-center gap-3"
-            style={{ background: "rgba(0,0,0,0.5)" }}
-          >
-            <span className="text-6xl opacity-30 group-hover:opacity-50 transition-opacity duration-300">
-              {PLATFORM_EMOJI[video.id]}
+      {/* Card */}
+      <a
+        href={video.url}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="group flex flex-col rounded-2xl overflow-hidden cursor-pointer"
+        style={{
+          background: BW.bg,
+          border: `1px solid ${BW.border}`,
+          backdropFilter: "blur(12px)",
+        }}
+      >
+        {/* Thumbnail */}
+        <div className="relative w-full aspect-video overflow-hidden bg-black/40">
+          <Image
+            src={video.thumbnail}
+            alt={`Video ${video.id}`}
+            fill
+            className="object-cover group-hover:scale-105 transition-transform duration-500"
+            unoptimized
+            style={{ filter: "grayscale(100%)" }}
+          />
+          <div className="absolute inset-0 bg-black/30 group-hover:bg-black/15 transition-colors duration-300" />
+
+          {/* Play button */}
+          <div className="absolute inset-0 flex items-center justify-center">
+            <motion.div
+              className="w-14 h-14 rounded-full flex items-center justify-center"
+              style={{
+                background: `${BW.accent}22`,
+                border: `2px solid ${BW.accent}80`,
+                boxShadow: `0 0 24px ${BW.accent}40`,
+              }}
+              whileHover={{ scale: 1.15 }}
+            >
+              <svg
+                width="18"
+                height="18"
+                viewBox="0 0 24 24"
+                fill={BW.accent}
+                className="ml-1"
+              >
+                <polygon points="5,3 19,12 5,21" />
+              </svg>
+            </motion.div>
+          </div>
+
+          {/* Platform badge */}
+          <div className="absolute top-3 left-3">
+            <div
+              className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-full"
+              style={{
+                background: "rgba(0,0,0,0.75)",
+                backdropFilter: "blur(8px)",
+                border: `1px solid ${BW.accent}40`,
+              }}
+            >
+              <YoutubeLogo />
+            </div>
+          </div>
+
+          {/* VIRAL badge */}
+          <div className="absolute top-3 right-3">
+            <span
+              className="text-[9px] font-black uppercase tracking-widest px-2.5 py-1 rounded-full"
+              style={{
+                background: "rgba(0,0,0,0.75)",
+                border: `1px solid ${BW.accent}50`,
+                color: BW.accent,
+              }}
+            >
+              VIRAL
             </span>
           </div>
-        )}
-
-        {/* Centered play button */}
-        <div className="absolute inset-0 flex items-center justify-center">
-          <motion.div
-            className="w-14 h-14 rounded-full flex items-center justify-center transition-all duration-300"
-            style={{
-              background: `${video.accentColor}22`,
-              border: `2px solid ${video.accentColor}80`,
-              boxShadow: `0 0 24px ${video.accentColor}40`,
-            }}
-            whileHover={{ scale: 1.15 }}
-          >
-            <svg
-              width="18"
-              height="18"
-              viewBox="0 0 24 24"
-              fill={video.accentColor}
-              className="ml-1"
-            >
-              <polygon points="5,3 19,12 5,21" />
-            </svg>
-          </motion.div>
         </div>
 
-        {/* Platform badge — top left */}
-        <div className="absolute top-3 left-3">
-          <div
-            className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-full"
-            style={{
-              background: "rgba(0,0,0,0.75)",
-              backdropFilter: "blur(8px)",
-              border: `1px solid ${video.accentColor}40`,
-            }}
-          >
-            <video.Logo />
-          </div>
-        </div>
-
-        {/* VIRAL badge — top right */}
-        <div className="absolute top-3 right-3">
-          <span
-            className="text-[9px] font-black uppercase tracking-widest px-2.5 py-1 rounded-full"
-            style={{
-              background: "rgba(0,0,0,0.75)",
-              border: `1px solid ${video.accentColor}50`,
-              color: video.accentColor,
-            }}
-          >
-            VIRAL
-          </span>
-        </div>
-      </div>
-
-      {/* Card footer */}
-      <div
-        className="flex items-center justify-between px-4 py-3.5"
-        style={{ borderTop: `1px solid ${video.borderColor}` }}
-      >
-        <div className="flex items-center gap-2">
-          <video.Logo />
-          <span className="text-xs font-bold text-white/70 uppercase tracking-wider">
-            {video.id === "youtube"
-              ? "YouTube"
-              : video.id === "instagram"
-                ? "Instagram"
-                : "X · Twitter"}
-          </span>
-        </div>
-        <span
-          className="text-xs font-black uppercase tracking-widest transition-all group-hover:tracking-[0.15em] duration-300"
-          style={{ color: video.accentColor }}
+        {/* Footer */}
+        <div
+          className="flex items-center justify-between px-4 py-3.5"
+          style={{ borderTop: `1px solid ${BW.border}` }}
         >
-          {watchLabel}
-        </span>
-      </div>
-    </motion.a>
+          <div className="flex items-center gap-2">
+            <YoutubeLogo />
+            <span className="text-xs font-bold text-white/70 uppercase tracking-wider">
+              YouTube
+            </span>
+          </div>
+          <span
+            className="text-xs font-black uppercase tracking-widest transition-all group-hover:tracking-[0.15em] duration-300"
+            style={{ color: BW.accent }}
+          >
+            {watchLabel}
+          </span>
+        </div>
+      </a>
+
+      {/* Description below card */}
+      <p
+        className="text-xs leading-relaxed mt-3 px-1"
+        style={{ color: "rgba(255,255,255,0.4)" }}
+      >
+        {video.desc}
+      </p>
+    </motion.div>
   );
 }
 
@@ -275,7 +213,7 @@ export default function ViralSection() {
         </motion.div>
 
         {/* Video cards grid */}
-        <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-5">
+        <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-6">
           {VIDEOS.map((video, i) => (
             <VideoCard
               key={video.id}
