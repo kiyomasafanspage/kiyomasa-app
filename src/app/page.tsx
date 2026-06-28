@@ -11,6 +11,7 @@ import EventSection from "@/components/EventSection";
 import DonationReport from "@/components/DonationReport";
 import GameSection from "@/components/GameSection";
 import GameLeaderboard from "@/components/GameLeaderboard";
+import WeeklyWinnersSection from "@/components/WeeklyWinnersSection";
 import RoadmapSection from "@/components/RoadmapSection";
 import CommunitySection from "@/components/CommunitySection";
 import DocsSection from "@/components/DocsSection";
@@ -40,6 +41,7 @@ export default function Home() {
         <DonationReport />
         <GameSection />
         <GameLeaderboard />
+        <WeeklyWinnersSection />
         <RoadmapSection />
         <CommunitySection />
         <DocsSection />
