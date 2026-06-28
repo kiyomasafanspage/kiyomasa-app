@@ -15,6 +15,7 @@ const NAV_KEYS: {
   { key: "roadmap", href: "#roadmap" },
   { key: "events", href: "#events" },
   { key: "donation", href: "#donation" },
+  { key: "game", href: "#game" },
   { key: "community", href: "#community" },
   { key: "docs", href: "#docs" },
 ];

@@ -26,6 +26,7 @@ export const T = {
       events: "Events",
       donation: "Donation",
       docs: "Docs",
+      game: "Game",
       buy: "Buy $KIYOMASA",
     },
     hero: {
@@ -306,6 +307,7 @@ export const T = {
       events: "イベント",
       donation: "寄付レポート",
       docs: "ドキュメント",
+      game: "ゲーム",
       buy: "$KIYOMASA を買う",
     },
     hero: {
@@ -585,6 +587,7 @@ export const T = {
       events: "活动",
       donation: "捐款报告",
       docs: "文档",
+      game: "游戏",
       buy: "购买 $KIYOMASA",
     },
     hero: {
