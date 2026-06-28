@@ -2,38 +2,23 @@
 
 import { motion, useInView, AnimatePresence } from "framer-motion";
 import { useRef, useState } from "react";
-
-const faqs = [
-  {
-    q: "Is Kiyomasa affiliated with the zoo?",
-    a: "No. Kiyomasa Meme is a community-inspired project and is not officially affiliated with any zoo or institution. We independently chose to donate ¥200,000+ to Higashiyama Zoo as part of our values.",
-  },
-  {
-    q: "What is the goal of $KIYOMASA?",
-    a: "To build the strongest Japanese meme community in crypto — combining culture, charity, and viral energy into a lasting movement that goes beyond speculation.",
-  },
-  {
-    q: "How can I participate?",
-    a: "Join X (@KiyomasaMeme), Telegram (kiyomasa_cto_chat), and the X Community Hub. Every member, every meme, every share matters.",
-  },
-  {
-    q: "Where can I buy $KIYOMASA?",
-    a: "You can buy on Jupiter Aggregator or any Solana DEX using the contract address: ANP1wJHYWYQPfrZvg8FnjduwfBVJhRV3xqKcs3yapump",
-  },
-  {
-    q: "Is there a buy/sell tax?",
-    a: "No. $KIYOMASA has 0% buy and 0% sell tax. Pure community token.",
-  },
-  {
-    q: "Who controls the project?",
-    a: "The community. This is a CTO (Community Takeover) project — no single entity controls Kiyomasa. All decisions are made by and for the community.",
-  },
-];
+import { useLang } from "@/contexts/LanguageContext";
 
 export default function FAQSection() {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: "-80px" });
   const [open, setOpen] = useState<number | null>(0);
+  const { tr } = useLang();
+  const f = tr.faq;
+
+  const faqs = [
+    { q: f.q1, a: f.a1 },
+    { q: f.q2, a: f.a2 },
+    { q: f.q3, a: f.a3 },
+    { q: f.q4, a: f.a4 },
+    { q: f.q5, a: f.a5 },
+    { q: f.q6, a: f.a6 },
+  ];
 
   return (
     <section id="faq" ref={ref} className="relative section-padding jp-pattern">
@@ -45,7 +30,7 @@ export default function FAQSection() {
           className="text-center mb-14"
         >
           <span className="text-xs tracking-[0.4em] text-[#ffd700]/60 uppercase font-medium">
-            Got Questions?
+            {f.eyebrow}
           </span>
           <h2 className="text-4xl md:text-5xl font-black mt-3 mb-4">
             <span className="gradient-text">FAQ</span>

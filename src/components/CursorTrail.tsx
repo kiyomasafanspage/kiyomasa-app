@@ -22,6 +22,8 @@ export default function CursorTrail() {
     const canvas = canvasRef.current;
     if (!canvas) return;
 
+    if (window.matchMedia("(hover: none)").matches) return;
+
     const resize = () => {
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;

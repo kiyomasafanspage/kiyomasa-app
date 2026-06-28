@@ -2,68 +2,16 @@
 
 import { motion, AnimatePresence, useInView } from "framer-motion";
 import { useRef, useState } from "react";
-
-const phases = [
-  {
-    phase: "01",
-    title: "Community Formation",
-    status: "active",
-    items: [
-      "Community Formation",
-      "Community Events",
-      "Social Growth",
-      "Meme Expansion",
-      "Website Launch",
-      "Initial Zoo Donation",
-    ],
-  },
-  {
-    phase: "02",
-    title: "Expansion",
-    status: "active",
-    items: [
-      "Influencer Partnerships",
-      "Viral Campaigns",
-      "NFT Genesis Collection",
-      "Exchange Growth",
-    ],
-  },
-  {
-    phase: "03",
-    title: "Ecosystem",
-    status: "future",
-    items: [
-      "Ecosystem Expansion",
-      "Strategic Collaborations",
-      "Global Awareness",
-      "NFT Marketplace",
-      "Staking System",
-    ],
-  },
-  {
-    phase: "04",
-    title: "Legacy",
-    status: "future",
-    items: [
-      "Kiyomasa Legacy",
-      "Major Exchange Goals",
-      "Community Dominance",
-      "Gorilla Metaverse",
-      "Zoo Partnerships",
-    ],
-  },
-];
+import { useLang } from "@/contexts/LanguageContext";
 
 const STATUS_META = {
   active: {
-    label: "In Progress",
     dotColor: "rgba(255,255,255,0.9)",
     badgeBg: "rgba(255,255,255,0.08)",
     badgeBorder: "rgba(255,255,255,0.2)",
     badgeColor: "rgba(255,255,255,0.8)",
   },
   future: {
-    label: "Planned",
     dotColor: "rgba(255,255,255,0.25)",
     badgeBg: "rgba(255,255,255,0.03)",
     badgeBorder: "rgba(255,255,255,0.08)",
@@ -76,6 +24,15 @@ export default function RoadmapSection() {
   const inView = useInView(ref, { once: true, margin: "-100px" });
   const [sectionOpen, setSectionOpen] = useState(false);
   const [openPhase, setOpenPhase] = useState<string | null>(null);
+  const { tr } = useLang();
+  const rm = tr.roadmap;
+
+  const phases = [
+    { phase: "01", title: rm.p1title, status: "active", items: rm.p1 },
+    { phase: "02", title: rm.p2title, status: "active", items: rm.p2 },
+    { phase: "03", title: rm.p3title, status: "future", items: rm.p3 },
+    { phase: "04", title: rm.p4title, status: "future", items: rm.p4 },
+  ];
 
   return (
     <section id="roadmap" ref={ref} className="relative section-padding">
@@ -94,7 +51,7 @@ export default function RoadmapSection() {
               className="text-[10px] tracking-[0.4em] uppercase font-medium block mb-1"
               style={{ color: "rgba(255,255,255,0.35)" }}
             >
-              The Journey
+              {rm.eyebrow}
             </span>
             <h2 className="text-3xl md:text-5xl font-black text-white leading-none">
               Road<span className="gradient-text">map</span>
@@ -152,6 +109,8 @@ export default function RoadmapSection() {
                   const meta =
                     STATUS_META[p.status as keyof typeof STATUS_META];
                   const isOpen = openPhase === p.phase;
+                  const label =
+                    p.status === "active" ? rm.inProgress : rm.planned;
 
                   return (
                     <motion.div
@@ -190,7 +149,7 @@ export default function RoadmapSection() {
                                 color: meta.badgeColor,
                               }}
                             >
-                              {meta.label}
+                              {label}
                             </span>
                           </div>
                         </div>
@@ -199,7 +158,10 @@ export default function RoadmapSection() {
                           style={{ color: "rgba(255,255,255,0.35)" }}
                         >
                           <span className="text-xs">
-                            {p.items.length} items
+                            {rm.itemsCount.replace(
+                              "{n}",
+                              String(p.items.length),
+                            )}
                           </span>
                           <svg
                             width="14"
@@ -239,9 +201,9 @@ export default function RoadmapSection() {
                               }}
                             >
                               <ul className="space-y-2.5 mt-3">
-                                {p.items.map((item) => (
+                                {p.items.map((item, idx) => (
                                   <li
-                                    key={item}
+                                    key={idx}
                                     className="flex items-center gap-3 text-sm"
                                     style={{
                                       color: "rgba(255,255,255,0.55)",

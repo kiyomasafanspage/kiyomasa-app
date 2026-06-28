@@ -14,13 +14,19 @@
 
 html {
   scroll-behavior: smooth;
+  overflow-x: hidden;
+  scroll-padding-top: 72px;
 }
 
 body {
   background: #060606;
   color: #fff;
   font-family: var(--font-geist-sans), "Inter", sans-serif;
-  overflow-x: hidden;
+}
+
+a,
+button {
+  touch-action: manipulation;
 }
 
 @layer utilities {
