@@ -17,6 +17,7 @@ export const T = {
   en: {
     nav: {
       home: "Home",
+      about: "Narrative",
       token: "Token",
       pump: "Pump",
       calculator: "Calculator",
@@ -191,8 +192,8 @@ export const T = {
     },
     viral: {
       eyebrow: "Going Viral · As Seen On",
-      heading: "KIYOMASA",
-      headingAccent: "In The Media",
+      heading: "SPOTLIGHT",
+      headingAccent: "",
       sub: "The internet can't stop watching. Kiyomasa is making waves across every platform.",
       watchBtn: "Watch Now →",
       youtube: "YouTube",
@@ -219,6 +220,7 @@ export const T = {
   ja: {
     nav: {
       home: "ホーム",
+      about: "ナラティブ",
       token: "トークン",
       pump: "ポンプ",
       calculator: "計算機",
@@ -392,8 +394,8 @@ export const T = {
     },
     viral: {
       eyebrow: "バイラル中 · 話題",
-      heading: "KIYOMASA",
-      headingAccent: "メディアで話題",
+      heading: "SPOTLIGHT",
+      headingAccent: "",
       sub: "インターネットが止まらない。キヨマサがあらゆるプラットフォームで話題沸騰中。",
       watchBtn: "今すぐ見る →",
       youtube: "YouTube",
@@ -420,6 +422,7 @@ export const T = {
   zh: {
     nav: {
       home: "首页",
+      about: "叙事",
       token: "代币",
       pump: "暴涨表",
       calculator: "计算器",
@@ -591,8 +594,8 @@ export const T = {
     },
     viral: {
       eyebrow: "病毒式传播 · 各大平台热议",
-      heading: "KIYOMASA",
-      headingAccent: "媒体报道",
+      heading: "SPOTLIGHT",
+      headingAccent: "",
       sub: "互联网停不下来。清正正在各个平台掀起波澜。",
       watchBtn: "立即观看 →",
       youtube: "YouTube",

@@ -1,6 +1,6 @@
 "use client";
 
-import { motion, useInView } from "framer-motion";
+import { motion, useInView, AnimatePresence } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 import { useTokenData, fmtUsd } from "@/hooks/useTokenData";
 import type { TokenData } from "@/hooks/useTokenData";
@@ -198,6 +198,7 @@ function StatPill({
 export default function PumpMeter() {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: "-80px" });
+  const [open, setOpen] = useState(false);
   const { data, loading } = useTokenData(30_000);
   const { tr } = useLang();
 
@@ -223,124 +224,178 @@ export default function PumpMeter() {
       }}
     >
       <div className="max-w-5xl mx-auto relative z-10">
-        {/* Header */}
+        {/* Header — collapse/expand toggle */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.7 }}
-          className="text-center mb-12"
+          className="mb-4"
         >
-          <span className="text-xs tracking-[0.4em] text-[#ffd700]/60 uppercase font-medium">
-            {tr.pump.eyebrow}
-          </span>
-          <h2 className="text-4xl md:text-6xl font-black mt-3 mb-4">
-            {tr.pump.heading}
-            <span className="gradient-text">{tr.pump.headingAccent}</span>
-          </h2>
-          <p className="text-white/45 max-w-md mx-auto text-sm">
-            {tr.pump.sub}
-          </p>
+          <button
+            onClick={() => setOpen((v) => !v)}
+            className="w-full flex items-center justify-between gap-4 rounded-2xl px-6 py-5 transition-all duration-300"
+            style={{
+              background: open
+                ? "rgba(255,215,0,0.05)"
+                : "rgba(255,255,255,0.03)",
+              border: open
+                ? "1px solid rgba(255,215,0,0.2)"
+                : "1px solid rgba(255,255,255,0.07)",
+            }}
+          >
+            <div className="text-left">
+              <span className="text-xs tracking-[0.4em] text-[#ffd700]/60 uppercase font-medium block mb-1">
+                {tr.pump.eyebrow}
+              </span>
+              <h2 className="text-2xl md:text-4xl font-black text-white leading-none">
+                {tr.pump.heading}
+                <span className="gradient-text">{tr.pump.headingAccent}</span>
+              </h2>
+            </div>
+            <motion.div
+              animate={{ rotate: open ? 180 : 0 }}
+              transition={{ duration: 0.3 }}
+              className="shrink-0 w-10 h-10 rounded-full flex items-center justify-center"
+              style={{
+                background: open
+                  ? "rgba(255,215,0,0.12)"
+                  : "rgba(255,255,255,0.06)",
+                border: open
+                  ? "1px solid rgba(255,215,0,0.3)"
+                  : "1px solid rgba(255,255,255,0.1)",
+              }}
+            >
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke={open ? "#ffd700" : "rgba(255,255,255,0.5)"}
+                strokeWidth="2.5"
+                strokeLinecap="round"
+              >
+                <polyline points="6,9 12,15 18,9" />
+              </svg>
+            </motion.div>
+          </button>
         </motion.div>
 
-        <div className="glass rounded-3xl p-6 md:p-10 neon-border-red">
-          <div className="grid md:grid-cols-3 gap-8 items-center">
-            {/* Left stats */}
+        <AnimatePresence initial={false}>
+          {open && (
             <motion.div
-              initial={{ opacity: 0, x: -30 }}
-              animate={inView ? { opacity: 1, x: 0 } : {}}
-              transition={{ duration: 0.6, delay: 0.2 }}
-              className="grid grid-cols-2 md:grid-cols-1 gap-3"
+              key="pump-content"
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: "auto" }}
+              exit={{ opacity: 0, height: 0 }}
+              transition={{ duration: 0.4, ease: "easeInOut" }}
+              style={{ overflow: "hidden" }}
             >
-              <StatPill
-                label={tr.pump.volume}
-                value={loading ? "—" : fmtUsd(data?.volume24h ?? 0)}
-                color="#ffd700"
-              />
-              <StatPill
-                label={tr.pump.liquidity}
-                value={loading ? "—" : fmtUsd(data?.liquidity ?? 0)}
-                color="#a78bfa"
-              />
-              <StatPill
-                label={tr.pump.marketCap}
-                value={loading ? "—" : fmtUsd(data?.marketCap ?? 0)}
-                color="#ff6b6b"
-              />
-            </motion.div>
-
-            {/* Center gauge */}
-            <motion.div
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={inView ? { opacity: 1, scale: 1 } : {}}
-              transition={{ duration: 0.7, delay: 0.3 }}
-              className="flex flex-col items-center gap-4"
-            >
-              <Gauge target={score} inView={inView} />
-
-              {/* Buy/sell bar */}
-              {!loading && total > 0 && (
-                <div className="w-full max-w-[200px]">
-                  <div className="flex justify-between text-[10px] text-white/30 uppercase tracking-widest mb-1">
-                    <span>
-                      {tr.pump.buy} {buyPct}%
-                    </span>
-                    <span>
-                      {tr.pump.sell} {100 - buyPct}%
-                    </span>
-                  </div>
-                  <div className="h-1.5 rounded-full overflow-hidden bg-white/5">
-                    <div
-                      className="h-full rounded-l-full transition-all duration-700"
-                      style={{
-                        width: `${buyPct}%`,
-                        background: "linear-gradient(90deg,#00ff88,#00cc66)",
-                      }}
+              <div className="glass rounded-3xl p-6 md:p-10 neon-border-red">
+                <div className="grid md:grid-cols-3 gap-8 items-center">
+                  {/* Left stats */}
+                  <motion.div
+                    initial={{ opacity: 0, x: -30 }}
+                    animate={inView ? { opacity: 1, x: 0 } : {}}
+                    transition={{ duration: 0.6, delay: 0.2 }}
+                    className="grid grid-cols-2 md:grid-cols-1 gap-3"
+                  >
+                    <StatPill
+                      label={tr.pump.volume}
+                      value={loading ? "—" : fmtUsd(data?.volume24h ?? 0)}
+                      color="#ffd700"
                     />
-                  </div>
+                    <StatPill
+                      label={tr.pump.liquidity}
+                      value={loading ? "—" : fmtUsd(data?.liquidity ?? 0)}
+                      color="#a78bfa"
+                    />
+                    <StatPill
+                      label={tr.pump.marketCap}
+                      value={loading ? "—" : fmtUsd(data?.marketCap ?? 0)}
+                      color="#ff6b6b"
+                    />
+                  </motion.div>
+
+                  {/* Center gauge */}
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    animate={inView ? { opacity: 1, scale: 1 } : {}}
+                    transition={{ duration: 0.7, delay: 0.3 }}
+                    className="flex flex-col items-center gap-4"
+                  >
+                    <Gauge target={score} inView={inView} />
+
+                    {/* Buy/sell bar */}
+                    {!loading && total > 0 && (
+                      <div className="w-full max-w-[200px]">
+                        <div className="flex justify-between text-[10px] text-white/30 uppercase tracking-widest mb-1">
+                          <span>
+                            {tr.pump.buy} {buyPct}%
+                          </span>
+                          <span>
+                            {tr.pump.sell} {100 - buyPct}%
+                          </span>
+                        </div>
+                        <div className="h-1.5 rounded-full overflow-hidden bg-white/5">
+                          <div
+                            className="h-full rounded-l-full transition-all duration-700"
+                            style={{
+                              width: `${buyPct}%`,
+                              background:
+                                "linear-gradient(90deg,#00ff88,#00cc66)",
+                            }}
+                          />
+                        </div>
+                      </div>
+                    )}
+                  </motion.div>
+
+                  {/* Right stats */}
+                  <motion.div
+                    initial={{ opacity: 0, x: 30 }}
+                    animate={inView ? { opacity: 1, x: 0 } : {}}
+                    transition={{ duration: 0.6, delay: 0.2 }}
+                    className="grid grid-cols-2 md:grid-cols-1 gap-3"
+                  >
+                    <StatPill
+                      label={tr.pump.price1h}
+                      value={loading ? "—" : pFmt(p1h)}
+                      color={pColor(p1h)}
+                    />
+                    <StatPill
+                      label={tr.pump.price24h}
+                      value={loading ? "—" : pFmt(p24h)}
+                      color={pColor(p24h)}
+                    />
+                    <StatPill
+                      label={tr.pump.txns}
+                      value={loading ? "—" : total.toLocaleString()}
+                      color="#00e5ff"
+                    />
+                  </motion.div>
                 </div>
-              )}
-            </motion.div>
 
-            {/* Right stats */}
-            <motion.div
-              initial={{ opacity: 0, x: 30 }}
-              animate={inView ? { opacity: 1, x: 0 } : {}}
-              transition={{ duration: 0.6, delay: 0.2 }}
-              className="grid grid-cols-2 md:grid-cols-1 gap-3"
-            >
-              <StatPill
-                label={tr.pump.price1h}
-                value={loading ? "—" : pFmt(p1h)}
-                color={pColor(p1h)}
-              />
-              <StatPill
-                label={tr.pump.price24h}
-                value={loading ? "—" : pFmt(p24h)}
-                color={pColor(p24h)}
-              />
-              <StatPill
-                label={tr.pump.txns}
-                value={loading ? "—" : total.toLocaleString()}
-                color="#00e5ff"
-              />
+                {/* Bottom label */}
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={inView ? { opacity: 1, y: 0 } : {}}
+                  transition={{ delay: 0.8 }}
+                  className="mt-8 pt-6 border-t border-white/5 text-center"
+                >
+                  <p className="text-xs text-white/25 uppercase tracking-widest">
+                    {tr.pump.verdict} —{" "}
+                    <span
+                      className="font-black"
+                      style={{ color: lblDef.color }}
+                    >
+                      {tr.pump[lblDef.key]}
+                    </span>
+                  </p>
+                </motion.div>
+              </div>
             </motion.div>
-          </div>
-
-          {/* Bottom label */}
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={inView ? { opacity: 1, y: 0 } : {}}
-            transition={{ delay: 0.8 }}
-            className="mt-8 pt-6 border-t border-white/5 text-center"
-          >
-            <p className="text-xs text-white/25 uppercase tracking-widest">
-              {tr.pump.verdict} —{" "}
-              <span className="font-black" style={{ color: lblDef.color }}>
-                {tr.pump[lblDef.key]}
-              </span>
-            </p>
-          </motion.div>
-        </div>
+          )}
+        </AnimatePresence>
       </div>
     </section>
   );

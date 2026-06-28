@@ -99,29 +99,21 @@ export default function MusicPlayer() {
 
     const bass =
       data.slice(0, 8).reduce((a: number, b: number) => a + b, 0) / 8 / 255;
-    const mid =
-      data.slice(8, 48).reduce((a: number, b: number) => a + b, 0) / 40 / 255;
     const avg = data.reduce((a: number, b: number) => a + b, 0) / len / 255;
 
     /* ── CLEAR ── */
     ctx.clearRect(0, 0, W, H);
 
-    /* ── BACKGROUND RADIAL BASS PULSE ── */
+    /* ── BACKGROUND RADIAL BASS PULSE (B&W) ── */
     const bgR = Math.max(W, H) * 0.75;
     const bgGrad = ctx.createRadialGradient(cx, cy, 0, cx, cy, bgR);
-    bgGrad.addColorStop(
-      0,
-      `rgba(${Math.round(bass * 200)}, ${Math.round(bass * 18)}, 0, ${bass * 0.55})`,
-    );
-    bgGrad.addColorStop(
-      0.45,
-      `rgba(${Math.round(bass * 100)}, 0, 0, ${bass * 0.18})`,
-    );
+    bgGrad.addColorStop(0, `rgba(255,255,255,${bass * 0.06})`);
+    bgGrad.addColorStop(0.5, `rgba(255,255,255,${bass * 0.02})`);
     bgGrad.addColorStop(1, "rgba(0,0,0,0)");
     ctx.fillStyle = bgGrad;
     ctx.fillRect(0, 0, W, H);
 
-    /* ── RADIAL EQUALIZER BARS ── */
+    /* ── RADIAL EQUALIZER BARS (white/gray) ── */
     const numBars = Math.min(len, 128);
     const baseR = Math.min(W, H) * 0.1 + bass * 35;
 
@@ -135,21 +127,19 @@ export default function MusicPlayer() {
       const x2 = cx + Math.cos(angle) * (baseR + barH);
       const y2 = cy + Math.sin(angle) * (baseR + barH);
 
-      /* red → orange → gold gradient based on amplitude */
-      const hue = val > 0.7 ? 42 : val > 0.4 ? 20 : 0;
-      const light = 42 + val * 32;
-      const alpha = 0.4 + val * 0.6;
+      const lightness = Math.round(55 + val * 35);
+      const alpha = 0.35 + val * 0.65;
 
       ctx.beginPath();
       ctx.moveTo(x1, y1);
       ctx.lineTo(x2, y2);
-      ctx.strokeStyle = `hsla(${hue}, 92%, ${light}%, ${alpha})`;
+      ctx.strokeStyle = `rgba(${lightness * 2}, ${lightness * 2}, ${lightness * 2}, ${alpha})`;
       ctx.lineWidth = 1.5 + val * 2;
       ctx.lineCap = "round";
 
-      if (val > 0.55) {
-        ctx.shadowBlur = 10;
-        ctx.shadowColor = `hsl(${hue}, 92%, ${light}%)`;
+      if (val > 0.6) {
+        ctx.shadowBlur = 8;
+        ctx.shadowColor = `rgba(255,255,255,${val * 0.5})`;
       } else {
         ctx.shadowBlur = 0;
       }
@@ -157,63 +147,48 @@ export default function MusicPlayer() {
     }
     ctx.shadowBlur = 0;
 
-    /* ── INNER GLOW RING ── */
+    /* ── INNER GLOW RING (white) ── */
     ctx.beginPath();
     ctx.arc(cx, cy, baseR * 0.88, 0, Math.PI * 2);
-    ctx.strokeStyle = `rgba(255, ${Math.round(mid * 180)}, 0, ${0.25 + avg * 0.45})`;
-    ctx.lineWidth = 2;
+    ctx.strokeStyle = `rgba(255,255,255,${0.12 + avg * 0.25})`;
+    ctx.lineWidth = 1.5;
     ctx.stroke();
 
-    /* ── CONCENTRIC ACCENT RINGS ── */
+    /* ── CONCENTRIC ACCENT RINGS (white only) ── */
     for (let r = 1; r <= 5; r++) {
       const ringR = Math.max(1, baseR * (1 + r * 0.65) + bass * 18 * r);
-      const alpha = Math.max(0, (0.22 - r * 0.03) * (0.35 + avg * 0.9));
+      const alpha = Math.max(0, (0.15 - r * 0.02) * (0.4 + avg * 0.8));
       ctx.beginPath();
       ctx.arc(cx, cy, ringR, 0, Math.PI * 2);
-      ctx.strokeStyle =
-        r % 2 === 0
-          ? `rgba(255, 215, 0, ${alpha})`
-          : `rgba(255, 45, 45, ${alpha})`;
+      ctx.strokeStyle = `rgba(255,255,255,${alpha})`;
       ctx.lineWidth = r === 1 ? 1.5 : 1;
       ctx.stroke();
     }
 
-    /* ── BOTTOM HORIZONTAL EQ BARS ── */
+    /* ── BOTTOM HORIZONTAL EQ BARS (white/gray) ── */
     const barCount = 96;
     const barW = W / barCount;
     for (let i = 0; i < barCount; i++) {
       const idx = Math.floor((i / barCount) * len);
       const val = data[idx] / 255;
       const bH = val * H * 0.4;
-      const hue = val > 0.65 ? 38 : 0;
-      const alpha = 0.55 + val * 0.45;
+      const alpha = 0.4 + val * 0.45;
 
       const barGrad = ctx.createLinearGradient(0, H - bH, 0, H);
-      barGrad.addColorStop(0, `hsla(${hue}, 95%, 58%, ${alpha})`);
-      barGrad.addColorStop(1, `hsla(${hue}, 95%, 30%, 0.4)`);
+      barGrad.addColorStop(0, `rgba(255,255,255,${alpha})`);
+      barGrad.addColorStop(1, `rgba(180,180,180,0.2)`);
       ctx.fillStyle = barGrad;
       ctx.fillRect(i * barW + 1, H - bH, barW - 2, bH);
-
-      /* subtle top reflection */
-      ctx.fillStyle = `hsla(${hue}, 95%, 55%, ${alpha * 0.12})`;
-      ctx.fillRect(i * barW + 1, 0, barW - 2, bH * 0.18);
     }
 
-    /* ── BEAT SHOCKWAVE ── */
+    /* ── BEAT SHOCKWAVE (white) ── */
     if (bass > 0.68) {
       const intensity = (bass - 0.68) / 0.32;
       const shockR = intensity * Math.min(W, H) * 0.55;
       ctx.beginPath();
       ctx.arc(cx, cy, Math.max(0, shockR), 0, Math.PI * 2);
-      ctx.strokeStyle = `rgba(255, 215, 0, ${intensity * 0.45})`;
+      ctx.strokeStyle = `rgba(255,255,255,${intensity * 0.3})`;
       ctx.lineWidth = 2 + intensity * 4;
-      ctx.stroke();
-
-      /* secondary shockwave offset */
-      ctx.beginPath();
-      ctx.arc(cx, cy, Math.max(0, shockR * 0.6), 0, Math.PI * 2);
-      ctx.strokeStyle = `rgba(255, 45, 45, ${intensity * 0.3})`;
-      ctx.lineWidth = 1 + intensity * 2;
       ctx.stroke();
     }
 
@@ -272,7 +247,7 @@ export default function MusicPlayer() {
                 {[0, 1, 2].map((i) => (
                   <motion.div
                     key={i}
-                    className="absolute rounded-full border border-[#ff2d2d]/60"
+                    className="absolute rounded-full border border-white/30"
                     style={{
                       inset: -(i + 1) * 14,
                     }}
@@ -301,9 +276,10 @@ export default function MusicPlayer() {
             style={
               playing
                 ? {
-                    background: "linear-gradient(135deg, #ff2d2d, #c0392b)",
+                    background: "rgba(255,255,255,0.12)",
+                    border: "1px solid rgba(255,255,255,0.35)",
                     boxShadow:
-                      "0 0 28px rgba(255,45,45,0.75), 0 0 56px rgba(255,45,45,0.3), 0 0 90px rgba(255,45,45,0.1)",
+                      "0 0 24px rgba(255,255,255,0.2), 0 0 48px rgba(255,255,255,0.08)",
                   }
                 : {
                     background: "rgba(255,255,255,0.06)",
@@ -319,7 +295,7 @@ export default function MusicPlayer() {
                 className="absolute inset-0 rounded-full"
                 style={{
                   background:
-                    "conic-gradient(from 0deg, transparent 70%, rgba(255,215,0,0.25) 85%, transparent 100%)",
+                    "conic-gradient(from 0deg, transparent 70%, rgba(255,255,255,0.15) 85%, transparent 100%)",
                 }}
                 animate={{ rotate: [0, 360] }}
                 transition={{ duration: 2.5, repeat: Infinity, ease: "linear" }}
@@ -399,7 +375,9 @@ export default function MusicPlayer() {
         {/* Label */}
         <span
           className="text-[9px] uppercase tracking-[0.22em] font-black transition-colors duration-500"
-          style={{ color: playing ? "#ff2d2d" : "rgba(255,255,255,0.2)" }}
+          style={{
+            color: playing ? "rgba(255,255,255,0.8)" : "rgba(255,255,255,0.2)",
+          }}
         >
           {playing ? tr.music.playing : tr.music.bgm}
         </span>

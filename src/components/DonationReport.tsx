@@ -1,6 +1,6 @@
 "use client";
 
-import { motion, useInView } from "framer-motion";
+import { motion, useInView, AnimatePresence } from "framer-motion";
 import { useRef, useState } from "react";
 import Image from "next/image";
 import { useLang } from "@/contexts/LanguageContext";
@@ -280,6 +280,7 @@ export default function DonationReport() {
   const inView = useInView(ref, { once: true, margin: "-80px" });
   const { tr } = useLang();
   const [preview, setPreview] = useState<string | null>(null);
+  const [open, setOpen] = useState(false);
 
   return (
     <section id="donation" ref={ref} className="relative section-padding">
@@ -292,80 +293,127 @@ export default function DonationReport() {
       />
 
       <div className="max-w-5xl mx-auto relative z-10">
-        {/* Header */}
+        {/* Header — collapse/expand toggle */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.7 }}
-          className="text-center mb-12"
+          className="mb-4"
         >
-          <span className="text-xs tracking-[0.4em] text-[#00ff88]/60 uppercase font-medium">
-            {tr.donation.eyebrow}
-          </span>
-          <h2 className="text-4xl md:text-6xl font-black mt-3 mb-4">
-            {tr.donation.heading}{" "}
-            <span className="gradient-text">{tr.donation.headingAccent}</span>
-          </h2>
-          <p className="text-white/50 max-w-xl mx-auto text-sm leading-relaxed">
-            {tr.donation.sub}
-          </p>
-          <div
-            className="w-24 h-0.5 mx-auto mt-6"
+          <button
+            onClick={() => setOpen((v) => !v)}
+            className="w-full flex items-center justify-between gap-4 rounded-2xl px-6 py-5 transition-all duration-300 group"
             style={{
-              background:
-                "linear-gradient(90deg, transparent, #00ff88, transparent)",
+              background: open
+                ? "rgba(0,255,136,0.05)"
+                : "rgba(255,255,255,0.03)",
+              border: open
+                ? "1px solid rgba(0,255,136,0.2)"
+                : "1px solid rgba(255,255,255,0.07)",
             }}
-          />
-        </motion.div>
-
-        {/* Mission banner */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={inView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.6, delay: 0.1 }}
-          className="glass rounded-2xl p-5 mb-10 flex items-start gap-4"
-          style={{ border: "1px solid rgba(0,255,136,0.15)" }}
-        >
-          <div className="text-3xl shrink-0">🦍</div>
-          <div>
-            <h3 className="font-black text-[#00ff88] text-sm mb-1">
-              {tr.donation.missionTitle}
-            </h3>
-            <p className="text-sm text-white/55 leading-relaxed">
-              {tr.donation.missionDesc}
-            </p>
-          </div>
-        </motion.div>
-
-        {/* Donation cards — 2 column on md+ */}
-        <div className="grid md:grid-cols-2 gap-6 mb-6">
-          {DONATIONS.map((d, i) => (
-            <DonationCard
-              key={d.id}
-              donation={d}
-              index={i}
-              inView={inView}
-              onPreview={setPreview}
-            />
-          ))}
-        </div>
-
-        {/* More coming soon */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={inView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.6, delay: 0.5 }}
-          className="glass rounded-2xl py-4 px-6 text-center"
-          style={{ border: "1px solid rgba(255,215,0,0.1)" }}
-        >
-          <motion.p
-            className="text-sm font-bold text-[#ffd700]/65"
-            animate={{ opacity: [0.5, 1, 0.5] }}
-            transition={{ duration: 3, repeat: Infinity }}
           >
-            {tr.donation.moreComingSoon}
-          </motion.p>
+            <div className="text-left">
+              <span className="text-xs tracking-[0.4em] text-[#00ff88]/60 uppercase font-medium block mb-1">
+                {tr.donation.eyebrow}
+              </span>
+              <h2 className="text-2xl md:text-4xl font-black text-white leading-none">
+                {tr.donation.heading}{" "}
+                <span className="gradient-text">
+                  {tr.donation.headingAccent}
+                </span>
+              </h2>
+            </div>
+            <motion.div
+              animate={{ rotate: open ? 180 : 0 }}
+              transition={{ duration: 0.3 }}
+              className="shrink-0 w-10 h-10 rounded-full flex items-center justify-center"
+              style={{
+                background: open
+                  ? "rgba(0,255,136,0.12)"
+                  : "rgba(255,255,255,0.06)",
+                border: open
+                  ? "1px solid rgba(0,255,136,0.3)"
+                  : "1px solid rgba(255,255,255,0.1)",
+              }}
+            >
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke={open ? "#00ff88" : "rgba(255,255,255,0.5)"}
+                strokeWidth="2.5"
+                strokeLinecap="round"
+              >
+                <polyline points="6,9 12,15 18,9" />
+              </svg>
+            </motion.div>
+          </button>
         </motion.div>
+
+        {/* Collapsible content */}
+        <AnimatePresence initial={false}>
+          {open && (
+            <motion.div
+              key="donation-content"
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: "auto" }}
+              exit={{ opacity: 0, height: 0 }}
+              transition={{ duration: 0.4, ease: "easeInOut" }}
+              style={{ overflow: "hidden" }}
+            >
+              <div className="pt-2">
+                {/* Sub text */}
+                <p className="text-white/50 text-sm leading-relaxed text-center mb-8">
+                  {tr.donation.sub}
+                </p>
+
+                {/* Mission banner */}
+                <div
+                  className="glass rounded-2xl p-5 mb-8 flex items-start gap-4"
+                  style={{ border: "1px solid rgba(0,255,136,0.15)" }}
+                >
+                  <div className="text-3xl shrink-0">🦍</div>
+                  <div>
+                    <h3 className="font-black text-[#00ff88] text-sm mb-1">
+                      {tr.donation.missionTitle}
+                    </h3>
+                    <p className="text-sm text-white/55 leading-relaxed">
+                      {tr.donation.missionDesc}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Donation cards — 2 column on md+ */}
+                <div className="grid md:grid-cols-2 gap-6 mb-6">
+                  {DONATIONS.map((d, i) => (
+                    <DonationCard
+                      key={d.id}
+                      donation={d}
+                      index={i}
+                      inView={inView}
+                      onPreview={setPreview}
+                    />
+                  ))}
+                </div>
+
+                {/* More coming soon */}
+                <div
+                  className="glass rounded-2xl py-4 px-6 text-center"
+                  style={{ border: "1px solid rgba(255,215,0,0.1)" }}
+                >
+                  <motion.p
+                    className="text-sm font-bold text-[#ffd700]/65"
+                    animate={{ opacity: [0.5, 1, 0.5] }}
+                    transition={{ duration: 3, repeat: Infinity }}
+                  >
+                    {tr.donation.moreComingSoon}
+                  </motion.p>
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
 
       {/* Lightbox */}

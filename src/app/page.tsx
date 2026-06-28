@@ -5,10 +5,10 @@ import HeroSection from "@/components/HeroSection";
 import ViralSection from "@/components/ViralSection";
 import AboutSection from "@/components/AboutSection";
 import TokenSection from "@/components/TokenSection";
-import MemeGallery from "@/components/MemeGallery";
 import FanArtSection from "@/components/FanArtSection";
 import EventSection from "@/components/EventSection";
 import DonationReport from "@/components/DonationReport";
+import GameSection from "@/components/GameSection";
 import RoadmapSection from "@/components/RoadmapSection";
 import CommunitySection from "@/components/CommunitySection";
 import DocsSection from "@/components/DocsSection";
@@ -18,7 +18,6 @@ import MusicPlayer from "@/components/MusicPlayer";
 import CursorTrail from "@/components/CursorTrail";
 import PriceAlertToast from "@/components/PriceAlertToast";
 import PumpMeter from "@/components/PumpMeter";
-import WenMoonCalculator from "@/components/WenMoonCalculator";
 
 export default function Home() {
   return (
@@ -29,15 +28,14 @@ export default function Home() {
       <Navbar />
       <main className="relative z-10">
         <HeroSection />
-        <ViralSection />
         <AboutSection />
+        <ViralSection />
         <TokenSection />
         <PumpMeter />
-        <MemeGallery />
         <FanArtSection />
         <EventSection />
         <DonationReport />
-        <WenMoonCalculator />
+        <GameSection />
         <RoadmapSection />
         <CommunitySection />
         <DocsSection />

@@ -52,6 +52,13 @@ function XLogo() {
   );
 }
 
+/* ── Uniform B&W style for all cards ── */
+const BW = {
+  accent: "rgba(255,255,255,0.75)",
+  bg: "rgba(255,255,255,0.03)",
+  border: "rgba(255,255,255,0.1)",
+} as const;
+
 /* ── Individual media cards ── */
 const VIDEOS = [
   {
@@ -60,10 +67,9 @@ const VIDEOS = [
     thumbnail: "https://img.youtube.com/vi/Z8sYJSvJwMo/hqdefault.jpg",
     labelKey: "youtube" as const,
     Logo: YoutubeLogo,
-    accentColor: "#FF0000",
-    bgGradient:
-      "linear-gradient(135deg, rgba(255,0,0,0.12) 0%, rgba(200,0,0,0.04) 100%)",
-    borderColor: "rgba(255,0,0,0.25)",
+    accentColor: BW.accent,
+    bgGradient: BW.bg,
+    borderColor: BW.border,
     useImg: true,
   },
   {
@@ -72,10 +78,9 @@ const VIDEOS = [
     thumbnail: null,
     labelKey: "instagram" as const,
     Logo: InstagramLogo,
-    accentColor: "#E1306C",
-    bgGradient:
-      "linear-gradient(135deg, rgba(225,48,108,0.12) 0%, rgba(193,53,132,0.04) 100%)",
-    borderColor: "rgba(225,48,108,0.25)",
+    accentColor: BW.accent,
+    bgGradient: BW.bg,
+    borderColor: BW.border,
     useImg: false,
   },
   {
@@ -84,10 +89,9 @@ const VIDEOS = [
     thumbnail: null,
     labelKey: "twitter" as const,
     Logo: XLogo,
-    accentColor: "#ffffff",
-    bgGradient:
-      "linear-gradient(135deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.02) 100%)",
-    borderColor: "rgba(255,255,255,0.15)",
+    accentColor: BW.accent,
+    bgGradient: BW.bg,
+    borderColor: BW.border,
     useImg: false,
   },
 ] as const;
@@ -134,9 +138,9 @@ function VideoCard({
               fill
               className="object-cover group-hover:scale-105 transition-transform duration-500"
               unoptimized
+              style={{ filter: "grayscale(100%)" }}
             />
-            {/* Dark overlay */}
-            <div className="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-colors duration-300" />
+            <div className="absolute inset-0 bg-black/30 group-hover:bg-black/15 transition-colors duration-300" />
           </>
         ) : (
           /* Branded placeholder for Instagram / X */
@@ -251,7 +255,7 @@ export default function ViralSection() {
           transition={{ duration: 0.7 }}
           className="text-center mb-12"
         >
-          <span className="text-xs tracking-[0.4em] text-[#ff2d2d]/60 uppercase font-medium">
+          <span className="text-xs tracking-[0.4em] text-[rgba(255,255,255,0.25)]/60 uppercase font-medium">
             {tr.viral.eyebrow}
           </span>
           <h2 className="text-4xl md:text-6xl font-black mt-3 mb-4">
@@ -265,7 +269,7 @@ export default function ViralSection() {
             className="w-24 h-0.5 mx-auto mt-6"
             style={{
               background:
-                "linear-gradient(90deg, transparent, #ff2d2d, transparent)",
+                "linear-gradient(90deg, transparent, rgba(255,255,255,0.25), transparent)",
             }}
           />
         </motion.div>

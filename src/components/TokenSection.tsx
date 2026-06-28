@@ -1,6 +1,6 @@
 "use client";
 
-import { motion, useInView } from "framer-motion";
+import { motion, useInView, AnimatePresence } from "framer-motion";
 import { useRef, useState, useEffect } from "react";
 import { useTokenData, fmtUsd, fmtPrice } from "@/hooks/useTokenData";
 import DexChart from "@/components/DexChart";
@@ -79,6 +79,7 @@ export default function TokenSection() {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: "-100px" });
   const [copied, setCopied] = useState(false);
+  const [open, setOpen] = useState(false);
   const { data, loading } = useTokenData(30_000);
   const { tr } = useLang();
   const [updatedStr, setUpdatedStr] = useState("");
@@ -118,245 +119,298 @@ export default function TokenSection() {
       />
 
       <div className="max-w-7xl mx-auto relative z-10">
-        {/* Header */}
+        {/* Header — collapse/expand toggle */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.7 }}
-          className="text-center mb-14"
+          className="mb-4"
         >
-          <span className="text-xs tracking-[0.4em] text-[#ffd700]/60 uppercase font-medium">
-            {tr.token.eyebrow}
-          </span>
-          <h2 className="text-4xl md:text-6xl font-black mt-3 mb-4">
-            {tr.token.heading}{" "}
-            <span className="gradient-text">{tr.token.headingAccent}</span>
-          </h2>
-          <div
-            className="w-24 h-0.5 mx-auto"
+          <button
+            onClick={() => setOpen((v) => !v)}
+            className="w-full flex items-center justify-between gap-4 rounded-2xl px-6 py-5 transition-all duration-300"
             style={{
-              background:
-                "linear-gradient(90deg, transparent, #ffd700, transparent)",
+              background: open
+                ? "rgba(255,215,0,0.05)"
+                : "rgba(255,255,255,0.03)",
+              border: open
+                ? "1px solid rgba(255,215,0,0.2)"
+                : "1px solid rgba(255,255,255,0.07)",
             }}
-          />
-        </motion.div>
-
-        {/* ── Price ticker ── */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={inView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.6, delay: 0.1 }}
-          className="glass-red rounded-2xl p-4 md:p-5 mb-6 neon-border-red flex flex-wrap items-center justify-between gap-4"
-        >
-          <div className="flex items-center gap-4">
-            <div>
-              <p className="text-xs text-white/40 uppercase tracking-widest mb-1">
-                {tr.token.price}
-              </p>
-              <p className="text-3xl md:text-4xl font-black gradient-text-gold">
-                {loading ? <Skeleton /> : fmtPrice(data?.price ?? null)}
-              </p>
-            </div>
-            {!loading && data && (
-              <div className="flex flex-col gap-1">
-                <div className="flex items-center gap-2">
-                  <span className="text-xs text-white/30">1h</span>
-                  <PriceChange pct={data.priceChange1h} />
-                </div>
-                <div className="flex items-center gap-2">
-                  <span className="text-xs text-white/30">24h</span>
-                  <PriceChange pct={data.priceChange24h} />
-                </div>
-              </div>
-            )}
-          </div>
-          <div className="flex flex-col items-end gap-1">
-            <LiveDot />
-            {updatedStr && (
-              <span className="text-[10px] text-white/20">
-                {tr.token.updated} {updatedStr}
-              </span>
-            )}
-          </div>
-        </motion.div>
-
-        {/* ── 4 stat cards ── */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={inView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.6, delay: 0.2 }}
-          className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6"
-        >
-          <StatCard
-            label={tr.token.marketCap}
-            value={loading ? "—" : fmtUsd(data?.marketCap ?? 0)}
-            loading={loading}
-            accent="#ffd700"
-          />
-          <StatCard
-            label={tr.token.volume24h}
-            value={loading ? "—" : fmtUsd(data?.volume24h ?? 0)}
-            loading={loading}
-            accent="#ff6b6b"
-          />
-          <StatCard
-            label={tr.token.liquidity}
-            value={loading ? "—" : fmtUsd(data?.liquidity ?? 0)}
-            loading={loading}
-            accent="#00ff88"
-          />
-          <StatCard
-            label={tr.token.fdv}
-            value={loading ? "—" : fmtUsd(data?.fdv ?? 0)}
-            loading={loading}
-            accent="#a78bfa"
-          />
-        </motion.div>
-
-        {/* ── Buy/Sell pressure bar ── */}
-        {!loading && data && txTotal > 0 && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={inView ? { opacity: 1 } : {}}
-            transition={{ delay: 0.3 }}
-            className="glass rounded-2xl p-4 mb-6 flex flex-col gap-2"
           >
-            <div className="flex justify-between text-xs text-white/40 uppercase tracking-widest">
-              <span>
-                🟢 {tr.token.buys} {data.buys24h.toLocaleString()}
+            <div className="text-left">
+              <span className="text-xs tracking-[0.4em] text-[#ffd700]/60 uppercase font-medium block mb-1">
+                {tr.token.eyebrow}
               </span>
-              <span>
-                {tr.token.txTotal.replace("{n}", txTotal.toLocaleString())}
-              </span>
-              <span>
-                {tr.token.sells} {data.sells24h.toLocaleString()} 🔴
-              </span>
+              <h2 className="text-2xl md:text-4xl font-black text-white leading-none">
+                {tr.token.heading}{" "}
+                <span className="gradient-text">{tr.token.headingAccent}</span>
+              </h2>
             </div>
-            <div className="relative h-2.5 rounded-full overflow-hidden bg-white/5">
-              <div
-                className="absolute left-0 top-0 h-full rounded-l-full transition-all duration-700"
-                style={{
-                  width: `${buyPct}%`,
-                  background: "linear-gradient(90deg, #00ff88, #00cc66)",
-                }}
-              />
-              <div
-                className="absolute right-0 top-0 h-full rounded-r-full"
-                style={{
-                  width: `${100 - buyPct}%`,
-                  background: "linear-gradient(270deg, #ff4444, #cc2222)",
-                }}
-              />
-            </div>
-            <div className="flex justify-between">
-              <span className="text-xs font-bold text-[#00ff88]">
-                {tr.token.buyPct.replace("{n}", String(buyPct))}
-              </span>
-              <span className="text-xs font-bold text-[#ff4444]">
-                {tr.token.sellPct.replace("{n}", String(100 - buyPct))}
-              </span>
-            </div>
-          </motion.div>
-        )}
-
-        {/* ── DEX Chart ── */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={inView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.7, delay: 0.35 }}
-          className="mb-8"
-        >
-          <div className="flex items-center justify-between mb-3">
-            <h3 className="text-sm font-black text-white/60 uppercase tracking-widest">
-              {tr.token.chartLabel}
-            </h3>
-            <a
-              href={`https://dexscreener.com/solana/${CA}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-xs text-[#ffd700]/60 hover:text-[#ffd700] transition-colors uppercase tracking-widest"
+            <motion.div
+              animate={{ rotate: open ? 180 : 0 }}
+              transition={{ duration: 0.3 }}
+              className="shrink-0 w-10 h-10 rounded-full flex items-center justify-center"
+              style={{
+                background: open
+                  ? "rgba(255,215,0,0.12)"
+                  : "rgba(255,255,255,0.06)",
+                border: open
+                  ? "1px solid rgba(255,215,0,0.3)"
+                  : "1px solid rgba(255,255,255,0.1)",
+              }}
             >
-              {tr.token.openFull}
-            </a>
-          </div>
-          <DexChart pairAddress={data?.pairAddress} />
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke={open ? "#ffd700" : "rgba(255,255,255,0.5)"}
+                strokeWidth="2.5"
+                strokeLinecap="round"
+              >
+                <polyline points="6,9 12,15 18,9" />
+              </svg>
+            </motion.div>
+          </button>
         </motion.div>
 
-        {/* ── Token info + CA ── */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={inView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.7, delay: 0.4 }}
-          className="glass rounded-2xl p-8 neon-border-red"
-        >
-          <div className="grid md:grid-cols-2 gap-8">
-            <div>
-              <h3 className="text-xl font-black gradient-text mb-6">
-                {tr.token.detailsHeading}
-              </h3>
-              <div className="space-y-3">
-                {tokenInfo.map((t) => (
-                  <div
-                    key={t.label}
-                    className="flex items-center justify-between py-2 border-b border-white/5"
-                  >
-                    <span className="text-sm text-white/50 uppercase tracking-wider">
-                      {t.label}
-                    </span>
-                    <span className="text-sm font-bold text-white">
-                      {t.value}
-                    </span>
+        <AnimatePresence initial={false}>
+          {open && (
+            <motion.div
+              key="token-content"
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: "auto" }}
+              exit={{ opacity: 0, height: 0 }}
+              transition={{ duration: 0.4, ease: "easeInOut" }}
+              style={{ overflow: "hidden" }}
+            >
+              <div className="pt-2">
+                {/* ── Price ticker ── */}
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={inView ? { opacity: 1, y: 0 } : {}}
+                  transition={{ duration: 0.6, delay: 0.1 }}
+                  className="glass-red rounded-2xl p-4 md:p-5 mb-6 neon-border-red flex flex-wrap items-center justify-between gap-4"
+                >
+                  <div className="flex items-center gap-4">
+                    <div>
+                      <p className="text-xs text-white/40 uppercase tracking-widest mb-1">
+                        {tr.token.price}
+                      </p>
+                      <p className="text-3xl md:text-4xl font-black gradient-text-gold">
+                        {loading ? <Skeleton /> : fmtPrice(data?.price ?? null)}
+                      </p>
+                    </div>
+                    {!loading && data && (
+                      <div className="flex flex-col gap-1">
+                        <div className="flex items-center gap-2">
+                          <span className="text-xs text-white/30">1h</span>
+                          <PriceChange pct={data.priceChange1h} />
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <span className="text-xs text-white/30">24h</span>
+                          <PriceChange pct={data.priceChange24h} />
+                        </div>
+                      </div>
+                    )}
                   </div>
-                ))}
-              </div>
-            </div>
+                  <div className="flex flex-col items-end gap-1">
+                    <LiveDot />
+                    {updatedStr && (
+                      <span className="text-[10px] text-white/20">
+                        {tr.token.updated} {updatedStr}
+                      </span>
+                    )}
+                  </div>
+                </motion.div>
 
-            <div className="flex flex-col justify-between">
-              <div>
-                <h3 className="text-xl font-black gradient-text-gold mb-4">
-                  {tr.token.caHeading}
-                </h3>
-                <div className="glass-red rounded-xl p-4 neon-border-red mb-4">
-                  <p className="text-[10px] text-white/40 uppercase tracking-widest mb-2">
-                    {tr.token.caLabel}
-                  </p>
-                  <p className="text-xs font-mono text-[#ffd700] break-all leading-relaxed">
-                    {CA}
-                  </p>
-                </div>
-                <button
-                  onClick={copyCA}
-                  className={`w-full py-3 rounded-xl font-bold text-sm tracking-widest uppercase transition-all duration-300 ${
-                    copied
-                      ? "bg-[#00ff88]/20 text-[#00ff88] border border-[#00ff88]/40"
-                      : "btn-primary text-white"
-                  }`}
+                {/* ── 4 stat cards ── */}
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={inView ? { opacity: 1, y: 0 } : {}}
+                  transition={{ duration: 0.6, delay: 0.2 }}
+                  className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6"
                 >
-                  {copied ? tr.token.copyOk : tr.token.copyBtn}
-                </button>
-              </div>
+                  <StatCard
+                    label={tr.token.marketCap}
+                    value={loading ? "—" : fmtUsd(data?.marketCap ?? 0)}
+                    loading={loading}
+                    accent="#ffd700"
+                  />
+                  <StatCard
+                    label={tr.token.volume24h}
+                    value={loading ? "—" : fmtUsd(data?.volume24h ?? 0)}
+                    loading={loading}
+                    accent="#ff6b6b"
+                  />
+                  <StatCard
+                    label={tr.token.liquidity}
+                    value={loading ? "—" : fmtUsd(data?.liquidity ?? 0)}
+                    loading={loading}
+                    accent="#00ff88"
+                  />
+                  <StatCard
+                    label={tr.token.fdv}
+                    value={loading ? "—" : fmtUsd(data?.fdv ?? 0)}
+                    loading={loading}
+                    accent="#a78bfa"
+                  />
+                </motion.div>
 
-              <div className="mt-6 grid grid-cols-2 gap-3">
-                <a
-                  href="https://jup.ag/swap/SOL-ANP1wJHYWYQPfrZvg8FnjduwfBVJhRV3xqKcs3yapump"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="btn-primary text-white text-xs font-bold py-3 rounded-xl text-center tracking-widest uppercase"
+                {/* ── Buy/Sell pressure bar ── */}
+                {!loading && data && txTotal > 0 && (
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={inView ? { opacity: 1 } : {}}
+                    transition={{ delay: 0.3 }}
+                    className="glass rounded-2xl p-4 mb-6 flex flex-col gap-2"
+                  >
+                    <div className="flex justify-between text-xs text-white/40 uppercase tracking-widest">
+                      <span>
+                        🟢 {tr.token.buys} {data.buys24h.toLocaleString()}
+                      </span>
+                      <span>
+                        {tr.token.txTotal.replace(
+                          "{n}",
+                          txTotal.toLocaleString(),
+                        )}
+                      </span>
+                      <span>
+                        {tr.token.sells} {data.sells24h.toLocaleString()} 🔴
+                      </span>
+                    </div>
+                    <div className="relative h-2.5 rounded-full overflow-hidden bg-white/5">
+                      <div
+                        className="absolute left-0 top-0 h-full rounded-l-full transition-all duration-700"
+                        style={{
+                          width: `${buyPct}%`,
+                          background:
+                            "linear-gradient(90deg, #00ff88, #00cc66)",
+                        }}
+                      />
+                      <div
+                        className="absolute right-0 top-0 h-full rounded-r-full"
+                        style={{
+                          width: `${100 - buyPct}%`,
+                          background:
+                            "linear-gradient(270deg, #ff4444, #cc2222)",
+                        }}
+                      />
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-xs font-bold text-[#00ff88]">
+                        {tr.token.buyPct.replace("{n}", String(buyPct))}
+                      </span>
+                      <span className="text-xs font-bold text-[#ff4444]">
+                        {tr.token.sellPct.replace("{n}", String(100 - buyPct))}
+                      </span>
+                    </div>
+                  </motion.div>
+                )}
+
+                {/* ── DEX Chart ── */}
+                <motion.div
+                  initial={{ opacity: 0, y: 30 }}
+                  animate={inView ? { opacity: 1, y: 0 } : {}}
+                  transition={{ duration: 0.7, delay: 0.35 }}
+                  className="mb-8"
                 >
-                  {tr.token.buyJup}
-                </a>
-                <a
-                  href={`https://dexscreener.com/solana/${CA}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="btn-secondary text-xs font-bold py-3 rounded-xl text-center tracking-widest uppercase"
+                  <div className="flex items-center justify-between mb-3">
+                    <h3 className="text-sm font-black text-white/60 uppercase tracking-widest">
+                      {tr.token.chartLabel}
+                    </h3>
+                    <a
+                      href={`https://dexscreener.com/solana/${CA}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-xs text-[#ffd700]/60 hover:text-[#ffd700] transition-colors uppercase tracking-widest"
+                    >
+                      {tr.token.openFull}
+                    </a>
+                  </div>
+                  <DexChart pairAddress={data?.pairAddress} />
+                </motion.div>
+
+                {/* ── Token info + CA ── */}
+                <motion.div
+                  initial={{ opacity: 0, y: 30 }}
+                  animate={inView ? { opacity: 1, y: 0 } : {}}
+                  transition={{ duration: 0.7, delay: 0.4 }}
+                  className="glass rounded-2xl p-8 neon-border-red"
                 >
-                  {tr.token.dex}
-                </a>
+                  <div className="grid md:grid-cols-2 gap-8">
+                    <div>
+                      <h3 className="text-xl font-black gradient-text mb-6">
+                        {tr.token.detailsHeading}
+                      </h3>
+                      <div className="space-y-3">
+                        {tokenInfo.map((t) => (
+                          <div
+                            key={t.label}
+                            className="flex items-center justify-between py-2 border-b border-white/5"
+                          >
+                            <span className="text-sm text-white/50 uppercase tracking-wider">
+                              {t.label}
+                            </span>
+                            <span className="text-sm font-bold text-white">
+                              {t.value}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div className="flex flex-col justify-between">
+                      <div>
+                        <h3 className="text-xl font-black gradient-text-gold mb-4">
+                          {tr.token.caHeading}
+                        </h3>
+                        <div className="glass-red rounded-xl p-4 neon-border-red mb-4">
+                          <p className="text-[10px] text-white/40 uppercase tracking-widest mb-2">
+                            {tr.token.caLabel}
+                          </p>
+                          <p className="text-xs font-mono text-[#ffd700] break-all leading-relaxed">
+                            {CA}
+                          </p>
+                        </div>
+                        <button
+                          onClick={copyCA}
+                          className={`w-full py-3 rounded-xl font-bold text-sm tracking-widest uppercase transition-all duration-300 ${
+                            copied
+                              ? "bg-[#00ff88]/20 text-[#00ff88] border border-[#00ff88]/40"
+                              : "btn-primary text-white"
+                          }`}
+                        >
+                          {copied ? tr.token.copyOk : tr.token.copyBtn}
+                        </button>
+                      </div>
+
+                      <div className="mt-6 grid grid-cols-2 gap-3">
+                        <a
+                          href="https://gmgn.ai/sol/token/5RkcycHD_ANP1wJHYWYQPfrZvg8FnjduwfBVJhRV3xqKcs3yapump"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="btn-primary text-white text-xs font-bold py-3 rounded-xl text-center tracking-widest uppercase"
+                        >
+                          {tr.token.buyJup}
+                        </a>
+                        <a
+                          href={`https://dexscreener.com/solana/${CA}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="btn-secondary text-xs font-bold py-3 rounded-xl text-center tracking-widest uppercase"
+                        >
+                          {tr.token.dex}
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+                </motion.div>
               </div>
-            </div>
-          </div>
-        </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
     </section>
   );
