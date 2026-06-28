@@ -2,6 +2,7 @@ import ParticleBackground from "@/components/ParticleBackground";
 import SiteBackground from "@/components/SiteBackground";
 import Navbar from "@/components/Navbar";
 import HeroSection from "@/components/HeroSection";
+import NarrativeSection from "@/components/NarrativeSection";
 import ViralSection from "@/components/ViralSection";
 import AboutSection from "@/components/AboutSection";
 import TokenSection from "@/components/TokenSection";
@@ -28,6 +29,7 @@ export default function Home() {
       <Navbar />
       <main className="relative z-10">
         <HeroSection />
+        <NarrativeSection />
         <AboutSection />
         <ViralSection />
         <TokenSection />
