@@ -39,16 +39,20 @@ export default function GameSection() {
         />
 
         {/* Game card */}
-        <motion.div
+        <motion.a
+          href="/game-gorilla/index.html"
+          target="_blank"
+          rel="noopener noreferrer"
           initial={{ opacity: 0, y: 32 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.7, delay: 0.15 }}
           onMouseEnter={() => setHovered(true)}
           onMouseLeave={() => setHovered(false)}
-          className="relative rounded-2xl overflow-hidden cursor-pointer"
+          className="relative rounded-2xl overflow-hidden cursor-pointer block"
           style={{
             background: "rgba(255,255,255,0.03)",
             border: "1px solid rgba(255,255,255,0.08)",
+            textDecoration: "none",
           }}
         >
           {/* Mascot image area */}
@@ -130,7 +134,7 @@ export default function GameSection() {
               }}
             />
 
-            {/* COMING SOON badge top-right */}
+            {/* PLAY NOW badge top-right */}
             <motion.div
               className="absolute top-4 right-4"
               animate={hovered ? { scale: 1.08 } : { scale: 1 }}
@@ -140,11 +144,11 @@ export default function GameSection() {
                 className="text-[10px] font-black uppercase tracking-[0.2em] px-3 py-1.5 rounded-full"
                 style={{
                   background: "rgba(0,0,0,0.7)",
-                  border: "1px solid rgba(200,169,75,0.4)",
+                  border: "1px solid rgba(200,169,75,0.6)",
                   color: "#c8a94b",
                 }}
               >
-                Coming Soon
+                Play Now
               </span>
             </motion.div>
           </div>
@@ -173,31 +177,31 @@ export default function GameSection() {
               gorilla&apos;s next adventure.
             </p>
 
-            {/* Disabled button */}
+            {/* Play button */}
             <div
-              className="inline-flex items-center gap-2 px-8 py-3 rounded-full text-sm font-black uppercase tracking-widest cursor-not-allowed select-none"
+              className="inline-flex items-center gap-2 px-8 py-3 rounded-full text-sm font-black uppercase tracking-widest transition-all duration-300"
               style={{
-                background: "rgba(255,255,255,0.04)",
-                border: "1px solid rgba(255,255,255,0.1)",
-                color: "rgba(255,255,255,0.25)",
+                background: hovered
+                  ? "rgba(200,169,75,0.15)"
+                  : "rgba(255,255,255,0.06)",
+                border: hovered
+                  ? "1px solid rgba(200,169,75,0.6)"
+                  : "1px solid rgba(255,255,255,0.15)",
+                color: hovered ? "#c8a94b" : "rgba(255,255,255,0.7)",
               }}
             >
               <svg
                 width="14"
                 height="14"
                 viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
+                fill="currentColor"
               >
-                <circle cx="12" cy="12" r="10" />
-                <line x1="12" y1="8" x2="12" y2="12" />
-                <line x1="12" y1="16" x2="12.01" y2="16" />
+                <polygon points="5,3 19,12 5,21" />
               </svg>
-              In Development
+              Play Game
             </div>
           </div>
-        </motion.div>
+        </motion.a>
 
         {/* Note */}
         <motion.p

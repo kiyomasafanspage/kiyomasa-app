@@ -10,6 +10,7 @@ import FanArtSection from "@/components/FanArtSection";
 import EventSection from "@/components/EventSection";
 import DonationReport from "@/components/DonationReport";
 import GameSection from "@/components/GameSection";
+import GameLeaderboard from "@/components/GameLeaderboard";
 import RoadmapSection from "@/components/RoadmapSection";
 import CommunitySection from "@/components/CommunitySection";
 import DocsSection from "@/components/DocsSection";
@@ -38,6 +39,7 @@ export default function Home() {
         <EventSection />
         <DonationReport />
         <GameSection />
+        <GameLeaderboard />
         <RoadmapSection />
         <CommunitySection />
         <DocsSection />
