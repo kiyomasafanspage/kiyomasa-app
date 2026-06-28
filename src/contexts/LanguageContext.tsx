@@ -271,6 +271,7 @@ export const T = {
         "Viral Campaigns",
         "NFT Genesis Collection",
         "Exchange Growth",
+        "Game Airdrop Season 1",
       ],
       p3title: "Ecosystem",
       p3: [
@@ -279,6 +280,7 @@ export const T = {
         "Global Awareness",
         "NFT Marketplace",
         "Staking System",
+        "Game Airdrop Season 2",
       ],
       p4title: "Legacy",
       p4: [
@@ -548,6 +550,7 @@ export const T = {
         "バイラルキャンペーン",
         "NFTジェネシスコレクション",
         "取引所成長",
+        "ゲームエアドロップ シーズン1",
       ],
       p3title: "エコシステム",
       p3: [
@@ -556,6 +559,7 @@ export const T = {
         "グローバル認知度",
         "NFTマーケットプレイス",
         "ステーキングシステム",
+        "ゲームエアドロップ シーズン2",
       ],
       p4title: "レガシー",
       p4: [
@@ -815,9 +819,22 @@ export const T = {
         "首次动物园捐款",
       ],
       p2title: "扩张",
-      p2: ["网红合作", "病毒式营销", "NFT创世系列", "交易所增长"],
+      p2: [
+        "网红合作",
+        "病毒式营销",
+        "NFT创世系列",
+        "交易所增长",
+        "游戏空投 第1季",
+      ],
       p3title: "生态系统",
-      p3: ["生态系统扩张", "战略合作", "全球认知", "NFT市场", "质押系统"],
+      p3: [
+        "生态系统扩张",
+        "战略合作",
+        "全球认知",
+        "NFT市场",
+        "质押系统",
+        "游戏空投 第2季",
+      ],
       p4title: "传承",
       p4: [
         "清正传承",
