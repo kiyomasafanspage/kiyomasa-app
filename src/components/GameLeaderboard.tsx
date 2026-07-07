@@ -55,41 +55,57 @@ export default function GameLeaderboard() {
   useEffect(() => {
     fetchLeaderboard();
 
-    // Real-time: subscribe to any INSERT or UPDATE on holders table
+    // Real-time: INSERT/UPDATE → update row; DELETE → remove from list
     const channel = sb
       .channel("leaderboard-live")
       .on(
         "postgres_changes",
-        { event: "*", schema: "public", table: "holders" },
+        { event: "DELETE", schema: "public", table: "holders" },
+        (payload) => {
+          const removed = payload.old as { wallet: string };
+          setRows((prev) => prev.filter((r) => r.wallet !== removed.wallet));
+        },
+      )
+      .on(
+        "postgres_changes",
+        { event: "INSERT", schema: "public", table: "holders" },
+        (payload) => {
+          const added = payload.new as Holder;
+          setRows((prev) => {
+            const next = [
+              ...prev,
+              {
+                wallet: added.wallet,
+                username: added.username,
+                emoji: added.emoji,
+                balance: Number(added.balance) || 0,
+                score: Number(added.score) || 0,
+              },
+            ];
+            return next
+              .sort((a, b) => b.score - a.score || b.balance - a.balance)
+              .slice(0, 20);
+          });
+        },
+      )
+      .on(
+        "postgres_changes",
+        { event: "UPDATE", schema: "public", table: "holders" },
         (payload) => {
           const updated = payload.new as Holder;
           setPulse(updated.wallet);
           setTimeout(() => setPulse(null), 2000);
-
           setRows((prev) => {
             const idx = prev.findIndex((r) => r.wallet === updated.wallet);
-            let next: Holder[];
-            if (idx >= 0) {
-              next = [...prev];
-              next[idx] = {
-                wallet: updated.wallet,
-                username: updated.username,
-                emoji: updated.emoji,
-                balance: Number(updated.balance) || 0,
-                score: Number(updated.score) || 0,
-              };
-            } else {
-              next = [
-                ...prev,
-                {
-                  wallet: updated.wallet,
-                  username: updated.username,
-                  emoji: updated.emoji,
-                  balance: Number(updated.balance) || 0,
-                  score: Number(updated.score) || 0,
-                },
-              ];
-            }
+            if (idx < 0) return prev;
+            const next = [...prev];
+            next[idx] = {
+              wallet: updated.wallet,
+              username: updated.username,
+              emoji: updated.emoji,
+              balance: Number(updated.balance) || 0,
+              score: Number(updated.score) || 0,
+            };
             return next
               .sort((a, b) => b.score - a.score || b.balance - a.balance)
               .slice(0, 20);
