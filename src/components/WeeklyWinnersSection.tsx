@@ -12,7 +12,7 @@ const sb = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 interface WeekRow {
   wallet: string;
   username: string;
-  emoji: string;
+  emoji?: string;
   balance: number;
   score: number;
   rank: number;
@@ -281,7 +281,7 @@ export default function WeeklyWinnersSection() {
       for (const wid of uniqueWeeks) {
         const { data } = await sb
           .from("weekly_results")
-          .select("wallet,username,emoji,balance,score,rank")
+          .select("wallet,username,balance,score,rank")
           .eq("week_id", wid)
           .order("rank", { ascending: true })
           .limit(20);
