@@ -42,6 +42,7 @@ export default function GameLeaderboard() {
     const { data, error } = await sb
       .from("holders")
       .select("wallet,username,emoji,balance,score")
+      .gt("score", 0)
       .order("score", { ascending: false })
       .order("balance", { ascending: false })
       .limit(20);
@@ -96,6 +97,10 @@ export default function GameLeaderboard() {
           setPulse(updated.wallet);
           setTimeout(() => setPulse(null), 2000);
           setRows((prev) => {
+            const newScore = Number(updated.score) || 0;
+            // Remove from list if score reset to 0
+            if (newScore === 0)
+              return prev.filter((r) => r.wallet !== updated.wallet);
             const idx = prev.findIndex((r) => r.wallet === updated.wallet);
             if (idx < 0) return prev;
             const next = [...prev];
@@ -104,7 +109,7 @@ export default function GameLeaderboard() {
               username: updated.username,
               emoji: updated.emoji,
               balance: Number(updated.balance) || 0,
-              score: Number(updated.score) || 0,
+              score: newScore,
             };
             return next
               .sort((a, b) => b.score - a.score || b.balance - a.balance)
