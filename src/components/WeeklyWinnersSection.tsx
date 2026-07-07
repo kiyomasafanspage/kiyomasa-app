@@ -35,7 +35,6 @@ function formatNum(n: number) {
 }
 
 function formatWeekId(id: string) {
-  // "2026-W26" → "Week 26 · 2026"
   const [year, week] = id.split("-W");
   return `Week ${week} · ${year}`;
 }
@@ -61,7 +60,6 @@ const PODIUM_COLORS = [
 const MEDAL = ["🥇", "🥈", "🥉"];
 const RANK_LABEL = ["1st", "2nd", "3rd"];
 
-/* ── Announcement placeholder (shown when no data yet) ── */
 function ComingSoonState() {
   return (
     <motion.div
@@ -74,7 +72,6 @@ function ComingSoonState() {
         border: "1px solid rgba(255,255,255,0.07)",
       }}
     >
-      {/* Top banner */}
       <div
         className="w-full py-3 flex items-center justify-center gap-2"
         style={{
@@ -89,9 +86,7 @@ function ComingSoonState() {
           Season 1 · First Airdrop
         </span>
       </div>
-
       <div className="py-14 px-6 flex flex-col items-center gap-5">
-        {/* Trophy */}
         <div
           className="w-20 h-20 rounded-full flex items-center justify-center"
           style={{
@@ -102,8 +97,6 @@ function ComingSoonState() {
         >
           <span className="text-4xl">🏆</span>
         </div>
-
-        {/* Headline */}
         <div className="text-center">
           <h3 className="text-2xl md:text-3xl font-black text-white mb-2">
             Will be announced
@@ -115,8 +108,6 @@ function ComingSoonState() {
             next week
           </p>
         </div>
-
-        {/* Divider */}
         <div
           className="w-16 h-px"
           style={{
@@ -124,8 +115,6 @@ function ComingSoonState() {
               "linear-gradient(90deg, transparent, rgba(200,169,75,0.4), transparent)",
           }}
         />
-
-        {/* Sub text */}
         <p
           className="text-sm text-center max-w-xs leading-relaxed"
           style={{ color: "rgba(255,255,255,0.35)" }}
@@ -133,8 +122,6 @@ function ComingSoonState() {
           The first weekly winners will be revealed soon. Play the game, climb
           the leaderboard, and earn your spot on the podium.
         </p>
-
-        {/* Fake podium silhouette */}
         <div className="flex items-end gap-3 mt-2 opacity-20">
           {[60, 80, 48].map((h, i) => (
             <div
@@ -152,8 +139,6 @@ function ComingSoonState() {
             </div>
           ))}
         </div>
-
-        {/* CTA */}
         <a
           href="#game"
           className="mt-1 inline-flex items-center gap-2 px-6 py-2.5 rounded-full text-xs font-black uppercase tracking-widest transition-all duration-300 hover:scale-105"
@@ -173,7 +158,6 @@ function ComingSoonState() {
   );
 }
 
-/* ── Podium card for top 3 ── */
 function PodiumCard({
   row,
   rankIndex,
@@ -190,60 +174,53 @@ function PodiumCard({
     <motion.div
       initial={{ opacity: 0, y: 24 }}
       animate={inView ? { opacity: 1, y: 0 } : {}}
-      transition={{ duration: 0.6, delay: 0.1 + rankIndex * 0.12 }}
-      className="flex flex-col items-center rounded-2xl p-5 relative"
+      transition={{ duration: 0.5, delay: 0.05 + rankIndex * 0.1 }}
+      className="flex flex-col items-center rounded-2xl p-4 relative"
       style={{
         background: "rgba(255,255,255,0.03)",
         border: `1px solid ${c.border}`,
-        boxShadow: `0 0 32px ${c.glow}`,
+        boxShadow: `0 0 24px ${c.glow}`,
         order: rankIndex === 0 ? 0 : rankIndex === 1 ? -1 : 1,
       }}
     >
-      {/* Medal */}
-      <span className="text-4xl mb-2">{MEDAL[rankIndex]}</span>
-
-      {/* Avatar circle */}
+      <span className="text-3xl mb-1.5">{MEDAL[rankIndex]}</span>
       <div
-        className="w-14 h-14 rounded-full flex items-center justify-center text-2xl mb-3"
+        className="w-12 h-12 rounded-full flex items-center justify-center text-xl mb-2"
         style={{
           background: "rgba(255,255,255,0.06)",
           border: `2px solid ${c.border}`,
-          boxShadow: isFirst ? `0 0 20px ${c.glow}` : undefined,
+          boxShadow: isFirst ? `0 0 16px ${c.glow}` : undefined,
         }}
       >
         {row.emoji || "🦍"}
       </div>
-
-      {/* Name */}
-      <p className="font-black text-white text-sm mb-0.5 truncate max-w-full">
+      <p className="font-black text-white text-xs mb-0.5 truncate max-w-full text-center">
         {row.username || "Anonymous"}
       </p>
       <p
-        className="text-[10px] font-mono mb-3"
+        className="text-[9px] font-mono mb-2 truncate max-w-full"
         style={{ color: "rgba(255,255,255,0.3)" }}
       >
         {shortWallet(row.wallet)}
       </p>
-
-      {/* Score */}
       <div
-        className="w-full text-center py-2 rounded-xl"
+        className="w-full text-center py-1.5 rounded-xl"
         style={{
           background: "rgba(255,255,255,0.04)",
           border: `1px solid ${c.border}`,
         }}
       >
-        <p className="font-black text-lg" style={{ color: c.label }}>
+        <p className="font-black text-base" style={{ color: c.label }}>
           {formatNum(row.score)}
           <span
-            className="text-[10px] font-normal ml-1"
+            className="text-[9px] font-normal ml-1"
             style={{ color: "rgba(255,255,255,0.3)" }}
           >
             pts
           </span>
         </p>
         <p
-          className="text-[9px] uppercase tracking-widest font-bold"
+          className="text-[8px] uppercase tracking-widest font-bold"
           style={{ color: c.label, opacity: 0.6 }}
         >
           {RANK_LABEL[rankIndex]}
@@ -253,17 +230,241 @@ function PodiumCard({
   );
 }
 
+function WeekAccordion({
+  weekData,
+  isExpanded,
+  onToggle,
+  inView,
+  isLatest,
+}: {
+  weekData: WeekData;
+  isExpanded: boolean;
+  onToggle: () => void;
+  inView: boolean;
+  isLatest: boolean;
+}) {
+  const top3 = weekData.rows.slice(0, 3);
+  const rest = weekData.rows.slice(3);
+  const winner = top3[0];
+
+  return (
+    <div
+      className="rounded-2xl overflow-hidden mb-3"
+      style={{
+        background: isExpanded
+          ? "rgba(255,255,255,0.03)"
+          : "rgba(255,255,255,0.015)",
+        border: isExpanded
+          ? "1px solid rgba(200,169,75,0.2)"
+          : "1px solid rgba(255,255,255,0.07)",
+        transition: "border-color 0.3s, background 0.3s",
+      }}
+    >
+      {/* Accordion header */}
+      <button
+        onClick={onToggle}
+        className="w-full flex items-center justify-between px-5 py-4 text-left"
+        style={{ cursor: "pointer" }}
+      >
+        <div className="flex items-center gap-3 min-w-0">
+          {/* Badge */}
+          {isLatest && (
+            <span
+              className="text-[8px] font-black uppercase tracking-widest px-2 py-0.5 rounded-full flex-shrink-0"
+              style={{
+                background: "rgba(200,169,75,0.15)",
+                border: "1px solid rgba(200,169,75,0.4)",
+                color: "#c8a94b",
+              }}
+            >
+              Latest
+            </span>
+          )}
+          <span className="font-black text-sm text-white">
+            {formatWeekId(weekData.week_id)}
+          </span>
+          {winner && (
+            <span
+              className="text-[10px] truncate hidden sm:block"
+              style={{ color: "rgba(255,255,255,0.35)" }}
+            >
+              🥇 {winner.username || "Anonymous"} · {formatNum(winner.score)}{" "}
+              pts
+            </span>
+          )}
+        </div>
+        <div className="flex items-center gap-2.5 flex-shrink-0 ml-3">
+          <span
+            className="text-[10px]"
+            style={{ color: "rgba(255,255,255,0.25)" }}
+          >
+            {weekData.rows.length} players
+          </span>
+          <svg
+            width="14"
+            height="14"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            style={{
+              color: "rgba(255,255,255,0.3)",
+              transform: isExpanded ? "rotate(180deg)" : "rotate(0deg)",
+              transition: "transform 0.3s ease",
+              flexShrink: 0,
+            }}
+          >
+            <polyline points="6,9 12,15 18,9" />
+          </svg>
+        </div>
+      </button>
+
+      {/* Accordion content */}
+      <AnimatePresence initial={false}>
+        {isExpanded && (
+          <motion.div
+            key="content"
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.35, ease: "easeInOut" }}
+            style={{ overflow: "hidden" }}
+          >
+            <div
+              className="px-4 pb-4 pt-1"
+              style={{ borderTop: "1px solid rgba(255,255,255,0.06)" }}
+            >
+              {/* Week label */}
+              <p
+                className="text-[9px] uppercase tracking-widest font-bold text-center py-3"
+                style={{ color: "rgba(200,169,75,0.5)" }}
+              >
+                {formatWeekId(weekData.week_id)} — Airdrop Results
+              </p>
+
+              {/* Podium */}
+              {top3.length >= 1 && (
+                <div className="grid grid-cols-3 gap-2 mb-4">
+                  {top3.map((row, i) => (
+                    <PodiumCard
+                      key={row.wallet}
+                      row={row}
+                      rankIndex={i}
+                      inView={inView}
+                    />
+                  ))}
+                </div>
+              )}
+
+              {/* Ranks 4–20 */}
+              {rest.length > 0 && (
+                <div
+                  className="rounded-xl overflow-hidden"
+                  style={{
+                    background: "rgba(255,255,255,0.02)",
+                    border: "1px solid rgba(255,255,255,0.06)",
+                  }}
+                >
+                  {/* Table header */}
+                  <div
+                    className="grid px-4 py-2"
+                    style={{
+                      gridTemplateColumns: "32px 1fr auto auto",
+                      gap: "0.75rem",
+                      borderBottom: "1px solid rgba(255,255,255,0.05)",
+                    }}
+                  >
+                    {["#", "Player", "Score", "Holdings"].map((h, i) => (
+                      <span
+                        key={h}
+                        className="text-[8px] uppercase tracking-widest font-bold"
+                        style={{
+                          color: "rgba(255,255,255,0.18)",
+                          textAlign: i >= 2 ? "right" : "left",
+                        }}
+                      >
+                        {h}
+                      </span>
+                    ))}
+                  </div>
+                  {rest.map((row, i) => (
+                    <div
+                      key={row.wallet}
+                      className="grid px-4 py-3"
+                      style={{
+                        gridTemplateColumns: "32px 1fr auto auto",
+                        gap: "0.75rem",
+                        alignItems: "center",
+                        borderBottom:
+                          i < rest.length - 1
+                            ? "1px solid rgba(255,255,255,0.04)"
+                            : "none",
+                      }}
+                    >
+                      <span
+                        className="text-xs font-black text-center"
+                        style={{ color: "rgba(255,255,255,0.2)" }}
+                      >
+                        {row.rank}
+                      </span>
+                      <div className="flex items-center gap-2 min-w-0">
+                        <span className="text-sm leading-none flex-shrink-0">
+                          {row.emoji || "🦍"}
+                        </span>
+                        <div className="min-w-0">
+                          <p className="font-bold text-xs text-white truncate leading-tight">
+                            {row.username || "Anonymous"}
+                          </p>
+                          <p
+                            className="text-[9px] font-mono truncate leading-tight"
+                            style={{ color: "rgba(255,255,255,0.22)" }}
+                          >
+                            {shortWallet(row.wallet)}
+                          </p>
+                        </div>
+                      </div>
+                      <span
+                        className="font-black text-xs text-right"
+                        style={{ color: "rgba(255,255,255,0.7)" }}
+                      >
+                        {formatNum(row.score)}
+                        <span
+                          className="text-[8px] font-normal ml-0.5"
+                          style={{ color: "rgba(255,255,255,0.25)" }}
+                        >
+                          pts
+                        </span>
+                      </span>
+                      <span
+                        className="text-[10px] font-medium text-right"
+                        style={{ color: "rgba(255,255,255,0.28)" }}
+                      >
+                        {formatNum(row.balance)}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+}
+
 export default function WeeklyWinnersSection() {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: "-80px" });
 
   const [weeks, setWeeks] = useState<WeekData[]>([]);
-  const [selectedWeek, setSelectedWeek] = useState<string | null>(null);
+  const [expanded, setExpanded] = useState<Set<string>>(new Set());
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchWeeks = async () => {
-      // Single query — get top 20 per week using the most recent weeks
       const { data, error } = await sb
         .from("weekly_results")
         .select("week_id,wallet,username,balance,score,rank")
@@ -275,7 +476,6 @@ export default function WeeklyWinnersSection() {
         return;
       }
 
-      // Group rows by week_id
       const weekMap = new Map<string, WeekRow[]>();
       for (const row of data) {
         const rows = weekMap.get(row.week_id) ?? [];
@@ -288,14 +488,23 @@ export default function WeeklyWinnersSection() {
       );
 
       setWeeks(allWeeks);
-      if (allWeeks.length > 0) setSelectedWeek(allWeeks[0].week_id);
+      // Auto-expand most recent week only
+      if (allWeeks.length > 0) setExpanded(new Set([allWeeks[0].week_id]));
       setLoading(false);
     };
 
     fetchWeeks();
   }, []);
 
-  const currentWeekData = weeks.find((w) => w.week_id === selectedWeek);
+  const toggleWeek = (week_id: string) => {
+    setExpanded((prev) => {
+      const next = new Set(prev);
+      if (next.has(week_id)) next.delete(week_id);
+      else next.add(week_id);
+      return next;
+    });
+  };
+
   const hasData = !loading && weeks.length > 0;
 
   return (
@@ -323,29 +532,13 @@ export default function WeeklyWinnersSection() {
               Hall of <span className="gradient-text">Fame</span>
             </h3>
           </div>
-
-          {/* Week selector — only shown when there's data */}
-          {hasData && weeks.length > 1 && (
-            <select
-              value={selectedWeek ?? ""}
-              onChange={(e) => setSelectedWeek(e.target.value)}
-              className="text-[10px] font-bold uppercase tracking-wider rounded-lg px-3 py-2 outline-none cursor-pointer"
-              style={{
-                background: "rgba(255,255,255,0.05)",
-                border: "1px solid rgba(255,255,255,0.12)",
-                color: "rgba(255,255,255,0.6)",
-              }}
+          {hasData && (
+            <span
+              className="text-[10px] pb-1"
+              style={{ color: "rgba(255,255,255,0.2)" }}
             >
-              {weeks.map((w) => (
-                <option
-                  key={w.week_id}
-                  value={w.week_id}
-                  style={{ background: "#0a0a0a" }}
-                >
-                  {formatWeekId(w.week_id)}
-                </option>
-              ))}
-            </select>
+              {weeks.length} week{weeks.length > 1 ? "s" : ""} recorded
+            </span>
           )}
         </motion.div>
 
@@ -394,134 +587,26 @@ export default function WeeklyWinnersSection() {
             </motion.div>
           ) : (
             <motion.div
-              key={selectedWeek}
+              key="weeks"
               initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -8 }}
-              transition={{ duration: 0.35 }}
+              transition={{ duration: 0.4 }}
             >
-              {/* Week label */}
-              {selectedWeek && (
-                <p
-                  className="text-[10px] uppercase tracking-widest font-bold text-center mb-6"
-                  style={{ color: "rgba(200,169,75,0.6)" }}
-                >
-                  {formatWeekId(selectedWeek)}
-                </p>
-              )}
-
-              {/* Podium — top 3 */}
-              {currentWeekData && currentWeekData.rows.length >= 1 && (
-                <div className="grid grid-cols-3 gap-3 mb-6">
-                  {currentWeekData.rows.slice(0, 3).map((row, i) => (
-                    <PodiumCard
-                      key={row.wallet}
-                      row={row}
-                      rankIndex={i}
-                      inView={inView}
-                    />
-                  ))}
-                </div>
-              )}
-
-              {/* Remaining ranks 4–20 */}
-              {currentWeekData && currentWeekData.rows.length > 3 && (
-                <div
-                  className="rounded-2xl overflow-hidden"
-                  style={{
-                    background: "rgba(255,255,255,0.02)",
-                    border: "1px solid rgba(255,255,255,0.07)",
-                  }}
-                >
-                  {/* Table header */}
-                  <div
-                    className="grid px-5 py-3"
-                    style={{
-                      gridTemplateColumns: "36px 1fr auto auto",
-                      gap: "0.75rem",
-                      borderBottom: "1px solid rgba(255,255,255,0.06)",
-                    }}
-                  >
-                    {["#", "Player", "Score", "Holdings"].map((h) => (
-                      <span
-                        key={h}
-                        className="text-[9px] uppercase tracking-widest font-bold"
-                        style={{
-                          color: "rgba(255,255,255,0.2)",
-                          textAlign:
-                            h === "Score" || h === "Holdings"
-                              ? "right"
-                              : "left",
-                        }}
-                      >
-                        {h}
-                      </span>
-                    ))}
-                  </div>
-
-                  {currentWeekData.rows.slice(3).map((row, i) => (
-                    <div
-                      key={row.wallet}
-                      className="grid px-5 py-3.5"
-                      style={{
-                        gridTemplateColumns: "36px 1fr auto auto",
-                        gap: "0.75rem",
-                        alignItems: "center",
-                        borderBottom:
-                          i < currentWeekData.rows.length - 4
-                            ? "1px solid rgba(255,255,255,0.04)"
-                            : "none",
-                      }}
-                    >
-                      <span
-                        className="text-xs font-black text-center"
-                        style={{ color: "rgba(255,255,255,0.2)" }}
-                      >
-                        {row.rank}
-                      </span>
-                      <div className="flex items-center gap-2.5 min-w-0">
-                        <span className="text-base leading-none flex-shrink-0">
-                          {row.emoji || "🦍"}
-                        </span>
-                        <div className="min-w-0">
-                          <p className="font-bold text-sm text-white truncate leading-tight">
-                            {row.username || "Anonymous"}
-                          </p>
-                          <p
-                            className="text-[10px] font-mono truncate leading-tight"
-                            style={{ color: "rgba(255,255,255,0.25)" }}
-                          >
-                            {shortWallet(row.wallet)}
-                          </p>
-                        </div>
-                      </div>
-                      <span
-                        className="font-black text-sm text-right"
-                        style={{ color: "rgba(255,255,255,0.7)" }}
-                      >
-                        {formatNum(row.score)}
-                        <span
-                          className="text-[9px] font-normal ml-0.5"
-                          style={{ color: "rgba(255,255,255,0.3)" }}
-                        >
-                          pts
-                        </span>
-                      </span>
-                      <span
-                        className="text-xs font-medium text-right"
-                        style={{ color: "rgba(255,255,255,0.3)" }}
-                      >
-                        {formatNum(row.balance)}
-                      </span>
-                    </div>
-                  ))}
-                </div>
-              )}
+              {weeks.map((week, idx) => (
+                <WeekAccordion
+                  key={week.week_id}
+                  weekData={week}
+                  isExpanded={expanded.has(week.week_id)}
+                  onToggle={() => toggleWeek(week.week_id)}
+                  inView={inView}
+                  isLatest={idx === 0}
+                />
+              ))}
             </motion.div>
           )}
         </AnimatePresence>
 
-        {/* Footer note */}
+        {/* Footer */}
         <motion.p
           initial={{ opacity: 0 }}
           animate={inView ? { opacity: 1 } : {}}
@@ -529,8 +614,8 @@ export default function WeeklyWinnersSection() {
           className="text-center text-[10px] mt-5"
           style={{ color: "rgba(255,255,255,0.15)" }}
         >
-          Winners are snapshotted every Monday · Airdrop distributed to top
-          holders
+          Winners snapshotted every Monday · Scores reset weekly · Airdrop to
+          top holders
         </motion.p>
       </div>
 
