@@ -263,33 +263,29 @@ export default function WeeklyWinnersSection() {
 
   useEffect(() => {
     const fetchWeeks = async () => {
-      // Get all distinct week_ids
-      const { data: weekIds } = await sb
+      // Single query — get top 20 per week using the most recent weeks
+      const { data, error } = await sb
         .from("weekly_results")
-        .select("week_id")
-        .order("week_id", { ascending: false });
+        .select("week_id,wallet,username,balance,score,rank")
+        .order("week_id", { ascending: false })
+        .order("rank", { ascending: true });
 
-      if (!weekIds || weekIds.length === 0) {
+      if (error || !data || data.length === 0) {
         setLoading(false);
         return;
       }
 
-      const uniqueWeeks = [...new Set(weekIds.map((r) => r.week_id))];
-
-      // Fetch all rows for each week
-      const allWeeks: WeekData[] = [];
-      for (const wid of uniqueWeeks) {
-        const { data } = await sb
-          .from("weekly_results")
-          .select("wallet,username,balance,score,rank")
-          .eq("week_id", wid)
-          .order("rank", { ascending: true })
-          .limit(20);
-
-        if (data && data.length > 0) {
-          allWeeks.push({ week_id: wid, rows: data as WeekRow[] });
-        }
+      // Group rows by week_id
+      const weekMap = new Map<string, WeekRow[]>();
+      for (const row of data) {
+        const rows = weekMap.get(row.week_id) ?? [];
+        if (rows.length < 20) rows.push(row as WeekRow);
+        weekMap.set(row.week_id, rows);
       }
+
+      const allWeeks: WeekData[] = Array.from(weekMap.entries()).map(
+        ([week_id, rows]) => ({ week_id, rows }),
+      );
 
       setWeeks(allWeeks);
       if (allWeeks.length > 0) setSelectedWeek(allWeeks[0].week_id);
